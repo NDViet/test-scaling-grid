@@ -9,21 +9,85 @@
     <version>1.0.0-SNAPSHOT</version>
 
     <properties>
+        <exec.executable>bash</exec.executable>
+        <exec.argument1>-c</exec.argument1>
+        <helm.repo.selenium>https://www.selenium.dev/docker-selenium</helm.repo.selenium>
+        <helm.repo.jaeger>https://raw.githubusercontent.com/hansehe/jaeger-all-in-one/master/helm/charts
+        </helm.repo.jaeger>
+        <helm.repo.ingress>https://kubernetes.github.io/ingress-nginx</helm.repo.ingress>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
-    <dependencies>
-        <dependency>
-            <groupId>io.kokuwa.maven</groupId>
-            <artifactId>helm-maven-plugin</artifactId>
-            <version>6.6.1</version>
-        </dependency>
-    </dependencies>
+    <profiles>
+        <profile>
+            <id>set-executable-based-os</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                </os>
+            </activation>
+            <properties>
+                <exec.executable>cmd</exec.executable>
+                <exec.argument1>/C</exec.argument1>
+            </properties>
+        </profile>
+    </profiles>
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>helm-repo-add-selenium</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>${exec.executable}</executable>
+                            <arguments>
+                                <argument>${exec.argument1}</argument>
+                                <argument>"helm repo add selenium ${helm.repo.selenium}"</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>helm-repo-add-jaeger</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>${exec.executable}</executable>
+                            <arguments>
+                                <argument>${exec.argument1}</argument>
+                                <argument>"helm repo add jaeger ${helm.repo.jaeger}"
+                                </argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>helm-repo-add-ingress</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>${exec.executable}</executable>
+                            <arguments>
+                                <argument>${exec.argument1}</argument>
+                                <argument>"helm repo add ingress ${helm.repo.ingress}"</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
             <plugin>
                 <groupId>io.kokuwa.maven</groupId>
                 <artifactId>helm-maven-plugin</artifactId>
@@ -31,10 +95,11 @@
                 <extensions>true</extensions>
                 <executions>
                     <execution>
+                        <id>helm-package</id>
                         <phase>package</phase>
                         <goals>
-                            <goal>lint</goal>
                             <goal>dependency-build</goal>
+                            <goal>lint</goal>
                             <goal>package</goal>
                         </goals>
                     </execution>

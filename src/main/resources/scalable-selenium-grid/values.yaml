@@ -19,7 +19,7 @@ selenium-grid:
       - name: SE_ENABLE_TRACING
         value: "true"
       - name: JAVA_OPTS
-        value: "-Dotel.traces.exporter=jaeger -Dotel.exporter.jaeger.endpoint=http://{{ .Release.Name }}-jaeger-all-in-one-headless:14250 -Dotel.resource.attributes=service.name=selenium-router"
+        value: "-Dotel.traces.exporter=jaeger -Dotel.exporter.jaeger.endpoint=http://{{ .Release.Name }}-jaeger-all-in-one-headless:14250 -Dotel.resource.attributes=service.name=selenium"
 
 #jaeger-all-in-one:
   #enabled: true
@@ -35,3 +35,4 @@ ingress-nginx:
       type: ClusterIP
   tcp:
     4444: "{{ .Release.Namespace }}/selenium-router:4444"
+    16686: "{{ .Release.Namespace }}/{{ .Release.Name }}-jaeger-all-in-one-headless:16686"
