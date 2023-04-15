@@ -1,0 +1,37 @@
+tags:
+  full: false
+  selenium-grid: false
+  ingress-nginx: false
+
+global:
+  selenium-grid:
+    #enabled: true
+  jaeger-all-in-one:
+    #enabled: true
+  ingress-nginx:
+    #enabled: true
+
+selenium-grid:
+  #enabled: true
+  isolateComponents: true
+  components:
+    extraEnvironmentVariables:
+      - name: SE_ENABLE_TRACING
+        value: "true"
+      - name: JAVA_OPTS
+        value: "-Dotel.traces.exporter=jaeger -Dotel.exporter.jaeger.endpoint=http://{{ .Release.Name }}-jaeger-all-in-one-headless:14250 -Dotel.resource.attributes=service.name=selenium-router"
+
+#jaeger-all-in-one:
+  #enabled: true
+
+ingress-nginx:
+  #enabled: true
+  controller:
+    admissionWebhooks:
+      enabled: false
+    hostNetwork: true
+    kind: DaemonSet
+    service:
+      type: ClusterIP
+  tcp:
+    4444: "{{ .Release.Namespace }}/selenium-router:4444"
