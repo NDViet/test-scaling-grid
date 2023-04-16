@@ -10,7 +10,7 @@
 
     <properties>
         <exec.executable>bash</exec.executable>
-        <exec.argument1>-c</exec.argument1>
+        <exec.overrides>-c</exec.overrides>
         <helm.repo.selenium>https://www.selenium.dev/docker-selenium</helm.repo.selenium>
         <helm.repo.jaeger>https://raw.githubusercontent.com/hansehe/jaeger-all-in-one/master/helm/charts
         </helm.repo.jaeger>
@@ -30,7 +30,7 @@
             </activation>
             <properties>
                 <exec.executable>cmd</exec.executable>
-                <exec.argument1>/C</exec.argument1>
+                <exec.overrides>/C</exec.overrides>
             </properties>
         </profile>
     </profiles>
@@ -38,52 +38,31 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
+                <artifactId>maven-antrun-plugin</artifactId>
                 <version>3.1.0</version>
                 <executions>
                     <execution>
-                        <id>helm-repo-add-selenium</id>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
+                        <id>helm-repo-add</id>
+                        <phase>initialize</phase>
                         <configuration>
-                            <executable>${exec.executable}</executable>
-                            <arguments>
-                                <argument>${exec.argument1}</argument>
-                                <argument>"helm repo add selenium ${helm.repo.selenium}"</argument>
-                            </arguments>
+                            <target>
+                                <exec executable="${exec.executable}">
+                                    <arg value="${exec.overrides}"/>
+                                    <arg value="helm repo add selenium ${helm.repo.selenium}"/>
+                                </exec>
+                                <exec executable="${exec.executable}">
+                                    <arg value="${exec.overrides}"/>
+                                    <arg value="helm repo add jaeger ${helm.repo.jaeger}"/>
+                                </exec>
+                                <exec executable="${exec.executable}">
+                                    <arg value="${exec.overrides}"/>
+                                    <arg value="helm repo add ingress ${helm.repo.ingress}"/>
+                                </exec>
+                            </target>
                         </configuration>
-                    </execution>
-                    <execution>
-                        <id>helm-repo-add-jaeger</id>
-                        <phase>compile</phase>
                         <goals>
-                            <goal>exec</goal>
+                            <goal>run</goal>
                         </goals>
-                        <configuration>
-                            <executable>${exec.executable}</executable>
-                            <arguments>
-                                <argument>${exec.argument1}</argument>
-                                <argument>"helm repo add jaeger ${helm.repo.jaeger}"
-                                </argument>
-                            </arguments>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>helm-repo-add-ingress</id>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>${exec.executable}</executable>
-                            <arguments>
-                                <argument>${exec.argument1}</argument>
-                                <argument>"helm repo add ingress ${helm.repo.ingress}"</argument>
-                            </arguments>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
