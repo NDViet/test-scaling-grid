@@ -26,3 +26,19 @@ dependencies:
     tags:
       - full
       - ingress-nginx
+  - condition: global.keda.enabled, keda.enabled, global.grid-scaler.enabled, grid-scaler.enabled
+    name: keda
+    repository: https://kedacore.github.io/charts
+    version: 2.10.1
+    tags:
+      - full
+      - keda
+      - grid-scaler
+  - condition: global.grid-scaler.enabled, grid-scaler.enabled
+    name: grid-scaler
+    repository: file://../../../../../grid-scaler/src/main/resources/grid-scaler
+    version: 23.4.0
+    tags:
+      - full
+      - keda
+      - grid-scaler

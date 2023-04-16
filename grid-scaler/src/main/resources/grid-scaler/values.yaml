@@ -1,0 +1,38 @@
+global:
+  graphqlUrl: "http://selenium-router:4444/graphql"
+
+scale-chrome-node:
+  enabled: true
+  maxReplicaCount: 10
+  scaleTargetRef:
+    name: selenium-chrome-node
+  triggers:
+    - type: selenium-grid
+      metadata:
+        browserName: 'chrome'
+        authenticationRef:
+          name: trigger-auth-grid-secret
+
+scale-firefox-node:
+  enabled: true
+  maxReplicaCount: 10
+  scaleTargetRef:
+    name: selenium-firefox-node
+  triggers:
+    - type: selenium-grid
+      metadata:
+        browserName: 'firefox'
+        authenticationRef:
+          name: trigger-auth-grid-secret
+
+scale-edge-node:
+  enabled: true
+  maxReplicaCount: 10
+  scaleTargetRef:
+    name: selenium-edge-node
+  triggers:
+    - type: selenium-grid
+      metadata:
+        browserName: 'MicrosoftEdge'
+        authenticationRef:
+          name: trigger-auth-grid-secret

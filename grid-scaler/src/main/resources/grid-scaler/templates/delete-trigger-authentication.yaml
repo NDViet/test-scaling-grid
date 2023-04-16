@@ -1,0 +1,20 @@
+{{- if .Values.global.graphqlUrl }}
+apiVersion: keda.sh/v1alpha1
+kind: TriggerAuthentication
+metadata:
+  name: trigger-auth-grid-secret
+  namespace: {{ .Release.Namespace }}
+  labels:
+    component: trigger-auth-grid-secret
+    chart: {{ .Chart.Name }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+  annotations:
+    "helm.sh/hook": pre-delete,pre-upgrade
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  secretTargetRef:
+    - parameter: url
+      name: {{ .Release.Name }}-grid-secret
+      key: graphql-url
+{{- end }}

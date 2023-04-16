@@ -2,6 +2,7 @@ tags:
   full: false
   selenium-grid: false
   ingress-nginx: false
+  keda: false
 
 global:
   selenium-grid:
@@ -9,6 +10,8 @@ global:
   jaeger-all-in-one:
     #enabled: true
   ingress-nginx:
+    #enabled: true
+  keda:
     #enabled: true
 
 selenium-grid:
@@ -36,3 +39,6 @@ ingress-nginx:
   tcp:
     4444: "{{ .Release.Namespace }}/selenium-router:4444"
     16686: "{{ .Release.Namespace }}/{{ .Release.Name }}-jaeger-all-in-one-headless:16686"
+
+#keda:
+  #enabled: true

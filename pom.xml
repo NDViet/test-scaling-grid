@@ -6,90 +6,18 @@
 
     <groupId>org.ndviet</groupId>
     <artifactId>test-scaling-grid</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>23.4.0</version>
+    <packaging>pom</packaging>
+    <modules>
+        <module>component-scaler</module>
+        <module>grid-scaler</module>
+        <module>grid-scaling-charts-umbrella</module>
+    </modules>
 
     <properties>
-        <exec.executable>bash</exec.executable>
-        <exec.overrides>-c</exec.overrides>
-        <helm.repo.selenium>https://www.selenium.dev/docker-selenium</helm.repo.selenium>
-        <helm.repo.jaeger>https://raw.githubusercontent.com/hansehe/jaeger-all-in-one/master/helm/charts
-        </helm.repo.jaeger>
-        <helm.repo.ingress>https://kubernetes.github.io/ingress-nginx</helm.repo.ingress>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
-    <profiles>
-        <profile>
-            <id>set-executable-based-os</id>
-            <activation>
-                <os>
-                    <family>windows</family>
-                </os>
-            </activation>
-            <properties>
-                <exec.executable>cmd</exec.executable>
-                <exec.overrides>/C</exec.overrides>
-            </properties>
-        </profile>
-    </profiles>
-
-    <build>
-        <plugins>
-            <plugin>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>3.1.0</version>
-                <executions>
-                    <execution>
-                        <id>helm-repo-add</id>
-                        <phase>initialize</phase>
-                        <configuration>
-                            <target>
-                                <exec executable="${exec.executable}">
-                                    <arg value="${exec.overrides}"/>
-                                    <arg value="helm repo add selenium ${helm.repo.selenium}"/>
-                                </exec>
-                                <exec executable="${exec.executable}">
-                                    <arg value="${exec.overrides}"/>
-                                    <arg value="helm repo add jaeger ${helm.repo.jaeger}"/>
-                                </exec>
-                                <exec executable="${exec.executable}">
-                                    <arg value="${exec.overrides}"/>
-                                    <arg value="helm repo add ingress ${helm.repo.ingress}"/>
-                                </exec>
-                            </target>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>io.kokuwa.maven</groupId>
-                <artifactId>helm-maven-plugin</artifactId>
-                <version>6.6.1</version>
-                <extensions>true</extensions>
-                <executions>
-                    <execution>
-                        <id>helm-package</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>dependency-build</goal>
-                            <goal>lint</goal>
-                            <goal>package</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <chartDirectory>${project.basedir}/src/main/resources</chartDirectory>
-                    <chartVersion>${project.version}</chartVersion>
-                    <lintStrict>true</lintStrict>
-                    <useLocalHelmBinary>true</useLocalHelmBinary>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 </project>

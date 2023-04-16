@@ -1,0 +1,4 @@
+maxReplicaCount: 2
+scaleTargetRef:
+  name: "deployment-name"
+triggers: {}
