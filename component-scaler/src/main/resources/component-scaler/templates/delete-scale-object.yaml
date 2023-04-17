@@ -5,6 +5,7 @@ metadata:
   name: {{ template "component-scaler.fullname" . }}
   namespace: {{ .Release.Namespace }}
   labels:
+    type: ScaledObject
     component: {{ template "component-scaler.name" . }}
     chart: {{ template "component-scaler.chart" . }}
     release: {{ .Release.Name }}

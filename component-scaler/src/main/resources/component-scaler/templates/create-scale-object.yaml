@@ -5,17 +5,18 @@ metadata:
   name: {{ template "component-scaler.fullname" . }}
   namespace: {{ .Release.Namespace }}
   labels:
+    type: ScaledObject
     component: {{ template "component-scaler.name" . }}
     chart: {{ template "component-scaler.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
   annotations:
-    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook": post-install,post-upgrade,post-rollback
     "helm.sh/resource-policy": keep
 spec:
   maxReplicaCount: {{ .Values.maxReplicaCount }}
   scaleTargetRef:
-    name: {{ .Release.Name }}-{{ .Values.scaleTargetRef.name }}
+    name: {{ .Values.scaleTargetRef.name }}
   {{- if .Values.triggers }}
   triggers:
     {{- toYaml .Values.triggers | nindent 4 -}}

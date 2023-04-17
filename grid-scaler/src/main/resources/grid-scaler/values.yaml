@@ -10,8 +10,8 @@ scale-chrome-node:
     - type: selenium-grid
       metadata:
         browserName: 'chrome'
-        authenticationRef:
-          name: trigger-auth-grid-secret
+      authenticationRef:
+        name: trigger-auth-grid-secret
 
 scale-firefox-node:
   enabled: true
@@ -22,8 +22,8 @@ scale-firefox-node:
     - type: selenium-grid
       metadata:
         browserName: 'firefox'
-        authenticationRef:
-          name: trigger-auth-grid-secret
+      authenticationRef:
+        name: trigger-auth-grid-secret
 
 scale-edge-node:
   enabled: true
@@ -34,5 +34,5 @@ scale-edge-node:
     - type: selenium-grid
       metadata:
         browserName: 'MicrosoftEdge'
-        authenticationRef:
-          name: trigger-auth-grid-secret
+      authenticationRef:
+        name: trigger-auth-grid-secret
