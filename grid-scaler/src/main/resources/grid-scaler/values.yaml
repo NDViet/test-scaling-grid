@@ -3,36 +3,24 @@ global:
 
 scale-chrome-node:
   enabled: true
-  maxReplicaCount: 10
+  minReplicaCount: 0
+  maxReplicaCount: 20
   scaleTargetRef:
     name: selenium-chrome-node
-  triggers:
-    - type: selenium-grid
-      metadata:
-        browserName: 'chrome'
-      authenticationRef:
-        name: trigger-auth-grid-secret
+  triggers: []
 
 scale-firefox-node:
   enabled: true
-  maxReplicaCount: 10
+  minReplicaCount: 0
+  maxReplicaCount: 20
   scaleTargetRef:
     name: selenium-firefox-node
-  triggers:
-    - type: selenium-grid
-      metadata:
-        browserName: 'firefox'
-      authenticationRef:
-        name: trigger-auth-grid-secret
+  triggers: []
 
 scale-edge-node:
   enabled: true
-  maxReplicaCount: 10
+  minReplicaCount: 0
+  maxReplicaCount: 20
   scaleTargetRef:
     name: selenium-edge-node
-  triggers:
-    - type: selenium-grid
-      metadata:
-        browserName: 'MicrosoftEdge'
-      authenticationRef:
-        name: trigger-auth-grid-secret
+  triggers: []

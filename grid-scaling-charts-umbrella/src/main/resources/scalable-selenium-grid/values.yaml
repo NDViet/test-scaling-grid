@@ -13,6 +13,7 @@ global:
     #enabled: true
   keda:
     #enabled: true
+  graphqlUrl: "http://selenium-router:4444/graphql"
 
 selenium-grid:
   #enabled: true
@@ -23,6 +24,39 @@ selenium-grid:
         value: "true"
       - name: JAVA_OPTS
         value: "-Dotel.traces.exporter=jaeger -Dotel.exporter.jaeger.endpoint=http://{{ .Release.Name }}-jaeger-all-in-one-headless:14250 -Dotel.resource.attributes=service.name=selenium"
+  chromeNode:
+    terminationGracePeriodSeconds: 30
+    lifecycle:
+      preStop:
+        exec:
+          command:
+            - bash
+            - -c
+            - |
+              curl -X POST 127.0.0.1:5555/se/grid/node/drain --header 'X-REGISTRATION-SECRET;' && \
+              while curl 127.0.0.1:5555/status; do sleep 5; done
+  firefoxNode:
+    terminationGracePeriodSeconds: 30
+    lifecycle:
+      preStop:
+        exec:
+          command:
+            - bash
+            - -c
+            - |
+              curl -X POST 127.0.0.1:5555/se/grid/node/drain --header 'X-REGISTRATION-SECRET;' && \
+              while curl 127.0.0.1:5555/status; do sleep 5; done
+  edgeNode:
+    terminationGracePeriodSeconds: 30
+    lifecycle:
+      preStop:
+        exec:
+          command:
+            - bash
+            - -c
+            - |
+              curl -X POST 127.0.0.1:5555/se/grid/node/drain --header 'X-REGISTRATION-SECRET;' && \
+              while curl 127.0.0.1:5555/status; do sleep 5; done
 
 #jaeger-all-in-one:
   #enabled: true
@@ -42,3 +76,42 @@ ingress-nginx:
 
 #keda:
   #enabled: true
+
+grid-scaler:
+  #enabled: true
+  scale-chrome-node:
+    enabled: true
+    minReplicaCount: 0
+    maxReplicaCount: 20
+    scaleTargetRef:
+      name: selenium-chrome-node
+    triggers:
+      - type: selenium-grid
+        metadata:
+          browserName: 'chrome'
+        authenticationRef:
+          name: trigger-auth-grid-secret
+  scale-firefox-node:
+    enabled: true
+    minReplicaCount: 0
+    maxReplicaCount: 20
+    scaleTargetRef:
+      name: selenium-firefox-node
+    triggers:
+      - type: selenium-grid
+        metadata:
+          browserName: 'firefox'
+        authenticationRef:
+          name: trigger-auth-grid-secret
+  scale-edge-node:
+    enabled: true
+    minReplicaCount: 0
+    maxReplicaCount: 20
+    scaleTargetRef:
+      name: selenium-edge-node
+    triggers:
+      - type: selenium-grid
+        metadata:
+          browserName: 'MicrosoftEdge'
+        authenticationRef:
+          name: trigger-auth-grid-secret
