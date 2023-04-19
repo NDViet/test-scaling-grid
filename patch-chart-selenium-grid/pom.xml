@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.ndviet</groupId>
+        <artifactId>test-scaling-grid</artifactId>
+        <version>23.4.0</version>
+    </parent>
+
+    <artifactId>patch-chart-selenium-grid</artifactId>
+
+    <properties>
+        <chart.selenium.repository>https://www.selenium.dev/docker-selenium</chart.selenium.repository>
+        <chart.selenium.version>0.15.7</chart.selenium.version>
+    </properties>
+
+    <build>
+        <!--        Phases and tasks in order -->
+        <!--        validate: replace-chart-version -->
+        <!--        initialize: download-origin-chart -->
+        <!--        generate-resources: extract-origin-chart -->
+        <!--        process-resources: replace patch files to origin chart templates -->
+        <!--        package: package-patched-chart -->
+        <plugins>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>replace-chart-version</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <copy file="${project.basedir}/src/main/resources/patch-selenium-grid/Chart_template.yaml" tofile="${project.basedir}/src/main/resources/patch-selenium-grid/Chart.yaml"/>
+                                <replace dir="${project.basedir}" value="${chart.selenium.repository}">
+                                    <include name="**/Chart.yaml"/>
+                                    <replacetoken>@chart.selenium.repository@</replacetoken>
+                                </replace>
+                                <replace dir="${project.basedir}" value="${chart.selenium.version}">
+                                    <include name="**/Chart.yaml"/>
+                                    <replacetoken>@chart.selenium.version@</replacetoken>
+                                </replace>
+                            </target>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>extract-origin-chart</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <untar compression="gzip"
+                                       dest="${project.basedir}/src/main/resources/patch-selenium-grid/charts">
+                                    <fileset dir="${project.basedir}/src/main/resources/patch-selenium-grid/charts">
+                                        <include name="*.tgz"/>
+                                    </fileset>
+                                </untar>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>io.kokuwa.maven</groupId>
+                <artifactId>helm-maven-plugin</artifactId>
+                <version>6.6.1</version>
+                <extensions>true</extensions>
+                <executions>
+                    <execution>
+                        <id>download-origin-chart</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>dependency-build</goal>
+                        </goals>
+                        <configuration>
+                            <chartDirectory>${project.basedir}/src/main/resources</chartDirectory>
+                            <chartVersion>${project.version}</chartVersion>
+                            <outputDirectory>${project.parent.build.directory}/helm/repo</outputDirectory>
+                            <useLocalHelmBinary>true</useLocalHelmBinary>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>package-patched-chart</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>lint</goal>
+                            <goal>package</goal>
+                        </goals>
+                        <configuration>
+                            <chartDirectory>${project.basedir}/src/main/resources/patch-selenium-grid/charts/selenium-grid
+                            </chartDirectory>
+                            <chartVersion>${chart.selenium.version}</chartVersion>
+                            <outputDirectory>${project.parent.build.directory}/helm/repo</outputDirectory>
+                            <useLocalHelmBinary>true</useLocalHelmBinary>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
