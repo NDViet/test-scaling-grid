@@ -2,10 +2,10 @@ apiVersion: v2
 name: patch-selenium-grid
 description: A Helm chart for Kubernetes
 type: application
-version: 23.4.0
-appVersion: "23.4.0"
+version: @chart.this.version@
+appVersion: "@chart.this.version@"
 dependencies:
-  - name: selenium-grid
+  - name: @chart.selenium.name@
     repository: @chart.selenium.repository@
     version: @chart.selenium.version@
     tags:

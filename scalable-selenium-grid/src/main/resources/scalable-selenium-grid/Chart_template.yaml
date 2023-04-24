@@ -2,34 +2,34 @@ apiVersion: v2
 name: scalable-selenium-grid
 description: A Helm chart for Kubernetes
 type: application
-version: 23.4.0
-appVersion: "23.4.0"
+version: @chart.this.version@
+appVersion: "@chart.this.version@"
 dependencies:
   - condition: global.selenium-grid.enabled, selenium-grid.enabled
-    name: selenium-grid
+    name: @chart.selenium.name@
     repository: file://../../../../../patch-selenium-grid/src/main/resources/patch-selenium-grid/charts/selenium-grid
-    version: 0.15.7
+    version: @chart.selenium.version@
     tags:
       - full
       - selenium-grid
   - condition: global.jaeger-all-in-one.enabled, jaeger-all-in-one.enabled
-    name: jaeger-all-in-one
-    repository: https://raw.githubusercontent.com/hansehe/jaeger-all-in-one/master/helm/charts
-    version: 0.1.8
+    name: @chart.jaeger.name@
+    repository: @chart.jaeger.repository@
+    version: @chart.jaeger.version@
     tags:
       - full
       - jaeger-all-in-one
   - condition: global.ingress-nginx.enabled, ingress-nginx.enabled
-    name: ingress-nginx
-    repository: https://kubernetes.github.io/ingress-nginx
-    version: 4.0.6
+    name: @chart.ingress.name@
+    repository: @chart.ingress.repository@
+    version: @chart.ingress.version@
     tags:
       - full
       - ingress-nginx
   - condition: global.keda.enabled, keda.enabled, global.grid-scaler.enabled, grid-scaler.enabled
-    name: keda
-    repository: https://kedacore.github.io/charts
-    version: 2.10.1
+    name: @chart.keda.name@
+    repository: @chart.keda.repository@
+    version: @chart.keda.version@
     tags:
       - full
       - keda
@@ -37,7 +37,7 @@ dependencies:
   - condition: global.grid-scaler.enabled, grid-scaler.enabled
     name: grid-scaler
     repository: file://../../../../../grid-scaler/src/main/resources/grid-scaler
-    version: 23.4.0
+    version: @chart.this.version@
     tags:
       - full
       - keda
@@ -45,7 +45,7 @@ dependencies:
   - condition: global.grid-pvc.enabled, grid-pvc.enabled
     name: grid-pvc
     repository: file://../../../../../grid-pvc/src/main/resources/grid-pvc
-    version: 23.4.0
+    version: @chart.this.version@
     tags:
       - full
       - grid-pvc

@@ -9,38 +9,12 @@
         <version>23.4.0</version>
     </parent>
 
-    <artifactId>grid-scaling-charts-umbrella</artifactId>
-
-    <properties>
-        <exec.executable>bash</exec.executable>
-        <exec.overrides>-c</exec.overrides>
-        <helm.repo.selenium>https://www.selenium.dev/docker-selenium</helm.repo.selenium>
-        <helm.repo.jaeger>https://raw.githubusercontent.com/hansehe/jaeger-all-in-one/master/helm/charts
-        </helm.repo.jaeger>
-        <helm.repo.ingress>https://kubernetes.github.io/ingress-nginx</helm.repo.ingress>
-        <helm.repo.keda>https://kedacore.github.io/charts</helm.repo.keda>
-    </properties>
-
-    <profiles>
-        <profile>
-            <id>set-executable-based-os</id>
-            <activation>
-                <os>
-                    <family>windows</family>
-                </os>
-            </activation>
-            <properties>
-                <exec.executable>cmd</exec.executable>
-                <exec.overrides>/C</exec.overrides>
-            </properties>
-        </profile>
-    </profiles>
+    <artifactId>scalable-selenium-grid</artifactId>
 
     <build>
         <plugins>
             <plugin>
                 <artifactId>maven-antrun-plugin</artifactId>
-                <version>3.1.0</version>
                 <executions>
                     <execution>
                         <id>helm-repo-add</id>
@@ -49,34 +23,16 @@
                             <target>
                                 <exec executable="${exec.executable}">
                                     <arg value="${exec.overrides}"/>
-                                    <arg value="helm repo add selenium ${helm.repo.selenium}"/>
+                                    <arg value="helm repo add jaeger ${chart.jaeger.repository}"/>
                                 </exec>
                                 <exec executable="${exec.executable}">
                                     <arg value="${exec.overrides}"/>
-                                    <arg value="helm repo add jaeger ${helm.repo.jaeger}"/>
+                                    <arg value="helm repo add ingress ${chart.ingress.repository}"/>
                                 </exec>
                                 <exec executable="${exec.executable}">
                                     <arg value="${exec.overrides}"/>
-                                    <arg value="helm repo add ingress ${helm.repo.ingress}"/>
+                                    <arg value="helm repo add keda ${chart.keda.repository}"/>
                                 </exec>
-                                <exec executable="${exec.executable}">
-                                    <arg value="${exec.overrides}"/>
-                                    <arg value="helm repo add keda ${helm.repo.keda}"/>
-                                </exec>
-                            </target>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>clean-chart-lock</id>
-                        <phase>clean</phase>
-                        <configuration>
-                            <target>
-                                <delete>
-                                    <fileset dir="." includes="**/*.lock"/>
-                                </delete>
                             </target>
                         </configuration>
                         <goals>
@@ -89,7 +45,6 @@
             <plugin>
                 <groupId>io.kokuwa.maven</groupId>
                 <artifactId>helm-maven-plugin</artifactId>
-                <version>6.6.1</version>
                 <extensions>true</extensions>
                 <executions>
                     <execution>

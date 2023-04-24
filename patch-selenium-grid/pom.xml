@@ -11,14 +11,8 @@
 
     <artifactId>patch-selenium-grid</artifactId>
 
-    <properties>
-        <chart.selenium.repository>https://www.selenium.dev/docker-selenium</chart.selenium.repository>
-        <chart.selenium.version>0.15.7</chart.selenium.version>
-    </properties>
-
     <build>
         <!--        Phases and tasks in order -->
-        <!--        validate: replace-chart-version -->
         <!--        initialize: download-origin-chart -->
         <!--        generate-resources: extract-origin-chart -->
         <!--        process-resources: replace patch files to origin chart templates -->
@@ -26,26 +20,19 @@
         <plugins>
             <plugin>
                 <artifactId>maven-antrun-plugin</artifactId>
-                <version>3.1.0</version>
                 <executions>
                     <execution>
-                        <id>replace-chart-version</id>
+                        <id>helm-repo-add</id>
                         <phase>validate</phase>
                         <goals>
                             <goal>run</goal>
                         </goals>
                         <configuration>
                             <target>
-                                <copy file="${project.basedir}/src/main/resources/patch-selenium-grid/Chart_template.yaml"
-                                      tofile="${project.basedir}/src/main/resources/patch-selenium-grid/Chart.yaml"/>
-                                <replace dir="${project.basedir}" value="${chart.selenium.repository}">
-                                    <include name="**/Chart.yaml"/>
-                                    <replacetoken>@chart.selenium.repository@</replacetoken>
-                                </replace>
-                                <replace dir="${project.basedir}" value="${chart.selenium.version}">
-                                    <include name="**/Chart.yaml"/>
-                                    <replacetoken>@chart.selenium.version@</replacetoken>
-                                </replace>
+                                <exec executable="${exec.executable}">
+                                    <arg value="${exec.overrides}"/>
+                                    <arg value="helm repo add selenium ${chart.selenium.repository}"/>
+                                </exec>
                             </target>
                         </configuration>
                     </execution>
@@ -75,7 +62,8 @@
                         <configuration>
                             <target>
                                 <copy todir="${project.basedir}/src/main/resources/patch-selenium-grid/charts/selenium-grid/templates">
-                                    <fileset dir="${project.basedir}/src/main/resources/patch-selenium-grid/patch/templates"/>
+                                    <fileset
+                                            dir="${project.basedir}/src/main/resources/patch-selenium-grid/patch/templates"/>
                                 </copy>
                             </target>
                         </configuration>
@@ -86,7 +74,6 @@
             <plugin>
                 <groupId>io.kokuwa.maven</groupId>
                 <artifactId>helm-maven-plugin</artifactId>
-                <version>6.6.1</version>
                 <extensions>true</extensions>
                 <executions>
                     <execution>

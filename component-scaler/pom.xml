@@ -11,15 +11,14 @@
 
     <artifactId>component-scaler</artifactId>
 
-    <properties>
-    </properties>
-
     <build>
         <plugins>
             <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+            </plugin>
+            <plugin>
                 <groupId>io.kokuwa.maven</groupId>
                 <artifactId>helm-maven-plugin</artifactId>
-                <version>6.6.1</version>
                 <extensions>true</extensions>
                 <executions>
                     <execution>

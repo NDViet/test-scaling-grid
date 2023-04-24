@@ -11,35 +11,14 @@
 
     <artifactId>grid-pvc</artifactId>
 
-    <properties>
-    </properties>
-
     <build>
         <plugins>
             <plugin>
                 <artifactId>maven-antrun-plugin</artifactId>
-                <version>3.1.0</version>
-                <executions>
-                    <execution>
-                        <id>clean-chart-lock</id>
-                        <phase>clean</phase>
-                        <configuration>
-                            <target>
-                                <delete>
-                                    <fileset dir="." includes="**/*.lock"/>
-                                </delete>
-                            </target>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>io.kokuwa.maven</groupId>
                 <artifactId>helm-maven-plugin</artifactId>
-                <version>6.6.1</version>
                 <extensions>true</extensions>
                 <executions>
                     <execution>
