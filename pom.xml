@@ -9,8 +9,10 @@
     <version>23.4.0</version>
     <packaging>pom</packaging>
     <modules>
-        <module>patch-chart-selenium-grid</module>
+        <module>patch-selenium-grid</module>
+        <module>component-pvc</module>
         <module>component-scaler</module>
+        <module>grid-pvc</module>
         <module>grid-scaler</module>
         <module>grid-scaling-charts-umbrella</module>
     </modules>

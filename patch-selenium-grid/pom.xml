@@ -9,7 +9,7 @@
         <version>23.4.0</version>
     </parent>
 
-    <artifactId>patch-chart-selenium-grid</artifactId>
+    <artifactId>patch-selenium-grid</artifactId>
 
     <properties>
         <chart.selenium.repository>https://www.selenium.dev/docker-selenium</chart.selenium.repository>
@@ -36,7 +36,8 @@
                         </goals>
                         <configuration>
                             <target>
-                                <copy file="${project.basedir}/src/main/resources/patch-selenium-grid/Chart_template.yaml" tofile="${project.basedir}/src/main/resources/patch-selenium-grid/Chart.yaml"/>
+                                <copy file="${project.basedir}/src/main/resources/patch-selenium-grid/Chart_template.yaml"
+                                      tofile="${project.basedir}/src/main/resources/patch-selenium-grid/Chart.yaml"/>
                                 <replace dir="${project.basedir}" value="${chart.selenium.repository}">
                                     <include name="**/Chart.yaml"/>
                                     <replacetoken>@chart.selenium.repository@</replacetoken>
@@ -62,6 +63,23 @@
                                         <include name="*.tgz"/>
                                     </fileset>
                                 </untar>
+                            </target>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>replace-patch-resource</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <copy todir="${project.basedir}/src/main/resources/patch-selenium-grid/charts/selenium-grid/templates">
+                                    <fileset dir="${project.basedir}/src/main/resources/patch-selenium-grid/patch/templates"/>
+                                </copy>
+                                <copy todir="${project.basedir}/src/main/resources/patch-selenium-grid/charts/selenium-grid">
+                                    <fileset dir="${project.basedir}/src/main/resources/patch-selenium-grid/patch/values"/>
+                                </copy>
                             </target>
                         </configuration>
                     </execution>
@@ -95,7 +113,8 @@
                             <goal>package</goal>
                         </goals>
                         <configuration>
-                            <chartDirectory>${project.basedir}/src/main/resources/patch-selenium-grid/charts/selenium-grid
+                            <chartDirectory>
+                                ${project.basedir}/src/main/resources/patch-selenium-grid/charts/selenium-grid
                             </chartDirectory>
                             <chartVersion>${chart.selenium.version}</chartVersion>
                             <outputDirectory>${project.parent.build.directory}/helm/repo</outputDirectory>

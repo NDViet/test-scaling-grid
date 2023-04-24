@@ -5,6 +5,9 @@ tags:
   keda: false
 
 global:
+  seleniumGrid:
+    # Image tag for browser's recording
+    videoImageTag: ffmpeg-4.3.1-20230404
   selenium-grid:
     #enabled: true
   jaeger-all-in-one:
@@ -25,6 +28,17 @@ selenium-grid:
       - name: JAVA_OPTS
         value: "-Dotel.traces.exporter=jaeger -Dotel.exporter.jaeger.endpoint=http://{{ .Release.Name }}-jaeger-all-in-one-headless:14250 -Dotel.resource.attributes=service.name=selenium"
   chromeNode:
+    video:
+      enabled: true
+      imageName: selenium/video
+      extraVolumeMounts:
+        - mountPath: /videos
+          name: video-data-pvclaim
+          subPathExpr: $(POD_NAME)
+      extraVolumes:
+        - name: video-data-pvclaim
+          persistentVolumeClaim:
+            claimName: selenium-chrome-video-data-pvclaim
     terminationGracePeriodSeconds: 30
     lifecycle:
       preStop:

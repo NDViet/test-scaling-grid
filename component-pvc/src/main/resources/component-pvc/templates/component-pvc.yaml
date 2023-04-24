@@ -1,0 +1,30 @@
+{{- if and (or .Values.persistence.enabled .Values.global.persistence .enabled) (or .Values.nameOverride .Values.persistence.pv.enabled) -}}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ template "component-pvc.name" . }}-data-pvclaim
+  labels:
+    app: {{ template "component-pvc.name" . }}
+    chart: {{ template "component-pvc.chart" . }}
+    release: {{ .Release.Name }}
+    namespace: {{ .Release.Namespace }}
+    heritage: {{ .Release.Service }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+  {{- if not .Values.persistence.size }}
+      storage: 100Mi
+  {{- else }}
+      storage: {{ .Values.persistence.size | quote }}
+  {{- end }}
+  {{- if .Values.persistence.storageClass }}
+  {{- if (eq "-" .Values.persistence.storageClass) }}
+  storageClassName: ""
+  {{- else }}
+  storageClassName: {{ .Values.persistence.storageClass | quote }}
+  {{- end }}
+  {{- end }}
+{{- end }}
+

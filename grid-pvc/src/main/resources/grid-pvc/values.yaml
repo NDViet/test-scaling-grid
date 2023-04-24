@@ -1,0 +1,17 @@
+selenium-chrome-node:
+  enabled: true
+  persistence:
+    enabled: true
+    pv:
+      enabled: true
+      hostPath:
+        path: /tmp/selenium
+
+selenium-chrome-video:
+  enabled: true
+  persistence:
+    enabled: true
+    pv:
+      enabled: true
+      hostPath:
+        path: /tmp/selenium

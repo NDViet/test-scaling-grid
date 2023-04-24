@@ -1,0 +1,42 @@
+{{- if and (or .Values.persistence.enabled .Values.global.persistence .enabled) (or .Values.nameOverride .Values.persistence.pv.enabled) -}}
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-{{ template "component-pvc.name" . }}
+  labels:
+    app: {{ template "component-pvc.name" . }}
+    chart: {{ template "component-pvc.chart" . }}
+    release: {{ .Release.Name }}
+    namespace: {{ .Release.Namespace }}
+    heritage: {{ .Release.Service }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  capacity:
+  {{- if not .Values.persistence.size }}
+    storage: 100Mi
+  {{- else }}
+    storage: {{ .Values.persistence.size | quote }}
+  {{- end }}
+  claimRef:
+    name: {{ template "component-pvc.name" . }}-data-pvclaim
+    namespace: {{ .Release.Namespace }}
+  {{- if .Values.persistence.pv.hostPath.path }}
+  {{- if (eq "-" .Values.persistence.pv.hostPath.path) }}
+  hostPath:
+    path: /tmp/{{ .Release.Namespace }}/{{ .Release.Name }}/{{ template "component-pvc.name" . }}
+  {{- else }}
+  hostPath:
+    path: {{ .Values.persistence.pv.hostPath.path | quote }}
+  {{- end }}
+  {{- end }}
+  persistentVolumeReclaimPolicy: Retain
+  {{- if .Values.persistence.pv.storageClass }}
+  {{- if (eq "-" .Values.persistence.pv.storageClass) }}
+  storageClassName: ""
+  {{- else }}
+  storageClassName: {{ .Values.persistence.pv.storageClass | quote }}
+  {{- end }}
+  {{- end }}
+{{- end }}
+
