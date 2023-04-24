@@ -77,9 +77,6 @@
                                 <copy todir="${project.basedir}/src/main/resources/patch-selenium-grid/charts/selenium-grid/templates">
                                     <fileset dir="${project.basedir}/src/main/resources/patch-selenium-grid/patch/templates"/>
                                 </copy>
-                                <copy todir="${project.basedir}/src/main/resources/patch-selenium-grid/charts/selenium-grid">
-                                    <fileset dir="${project.basedir}/src/main/resources/patch-selenium-grid/patch/values"/>
-                                </copy>
                             </target>
                         </configuration>
                     </execution>
