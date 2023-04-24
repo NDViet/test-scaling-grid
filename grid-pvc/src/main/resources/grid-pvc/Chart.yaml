@@ -15,3 +15,23 @@ dependencies:
     name: component-pvc
     repository: file://../../../../../component-pvc/src/main/resources/component-pvc
     version: 23.4.0
+  - alias: selenium-firefox-node
+    condition: global.persistence.enabled,selenium-firefox-node.enabled
+    name: component-pvc
+    repository: file://../../../../../component-pvc/src/main/resources/component-pvc
+    version: 23.4.0
+  - alias: selenium-firefox-video
+    condition: global.persistence.enabled,selenium-firefox-video.enabled
+    name: component-pvc
+    repository: file://../../../../../component-pvc/src/main/resources/component-pvc
+    version: 23.4.0
+  - alias: selenium-edge-node
+    condition: global.persistence.enabled,selenium-edge-node.enabled
+    name: component-pvc
+    repository: file://../../../../../component-pvc/src/main/resources/component-pvc
+    version: 23.4.0
+  - alias: selenium-edge-video
+    condition: global.persistence.enabled,selenium-edge-video.enabled
+    name: component-pvc
+    repository: file://../../../../../component-pvc/src/main/resources/component-pvc
+    version: 23.4.0

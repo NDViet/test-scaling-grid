@@ -31,6 +31,15 @@ selenium-grid:
     video:
       enabled: true
       imageName: selenium/video
+      extraEnvironmentVariables:
+        - name: DISPLAY_CONTAINER_NAME
+          value: 0.0.0.0
+        - name: FILE_NAME
+          value: record_video.mp4
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
       extraVolumeMounts:
         - mountPath: /videos
           name: video-data-pvclaim
@@ -39,7 +48,13 @@ selenium-grid:
         - name: video-data-pvclaim
           persistentVolumeClaim:
             claimName: selenium-chrome-video-data-pvclaim
-    terminationGracePeriodSeconds: 30
+    startupProbe:
+      httpGet:
+        path: /status
+        port: 5555
+      failureThreshold: 120
+      periodSeconds: 5
+    terminationGracePeriodSeconds: 3600
     lifecycle:
       preStop:
         exec:
@@ -47,10 +62,36 @@ selenium-grid:
             - bash
             - -c
             - |
-              curl -X POST 127.0.0.1:5555/se/grid/node/drain --header 'X-REGISTRATION-SECRET;' && \
-              while curl 127.0.0.1:5555/status; do sleep 5; done
+              curl -X POST 0.0.0.0:5555/se/grid/node/drain --header 'X-REGISTRATION-SECRET;' && \
+              while curl 0.0.0.0:5555/status; do sleep 5; done
   firefoxNode:
-    terminationGracePeriodSeconds: 30
+    video:
+      enabled: true
+      imageName: selenium/video
+      extraEnvironmentVariables:
+        - name: DISPLAY_CONTAINER_NAME
+          value: 0.0.0.0
+        - name: FILE_NAME
+          value: record_video.mp4
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+      extraVolumeMounts:
+        - mountPath: /videos
+          name: video-data-pvclaim
+          subPathExpr: $(POD_NAME)
+      extraVolumes:
+        - name: video-data-pvclaim
+          persistentVolumeClaim:
+            claimName: selenium-firefox-video-data-pvclaim
+    startupProbe:
+      httpGet:
+        path: /status
+        port: 5555
+      failureThreshold: 120
+      periodSeconds: 5
+    terminationGracePeriodSeconds: 3600
     lifecycle:
       preStop:
         exec:
@@ -58,10 +99,36 @@ selenium-grid:
             - bash
             - -c
             - |
-              curl -X POST 127.0.0.1:5555/se/grid/node/drain --header 'X-REGISTRATION-SECRET;' && \
-              while curl 127.0.0.1:5555/status; do sleep 5; done
+              curl -X POST 0.0.0.0:5555/se/grid/node/drain --header 'X-REGISTRATION-SECRET;' && \
+              while curl 0.0.0.0:5555/status; do sleep 5; done
   edgeNode:
-    terminationGracePeriodSeconds: 30
+    video:
+      enabled: true
+      imageName: selenium/video
+      extraEnvironmentVariables:
+        - name: DISPLAY_CONTAINER_NAME
+          value: 0.0.0.0
+        - name: FILE_NAME
+          value: record_video.mp4
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+      extraVolumeMounts:
+        - mountPath: /videos
+          name: video-data-pvclaim
+          subPathExpr: $(POD_NAME)
+      extraVolumes:
+        - name: video-data-pvclaim
+          persistentVolumeClaim:
+            claimName: selenium-edge-video-data-pvclaim
+    startupProbe:
+      httpGet:
+        path: /status
+        port: 5555
+      failureThreshold: 120
+      periodSeconds: 5
+    terminationGracePeriodSeconds: 3600
     lifecycle:
       preStop:
         exec:
@@ -69,8 +136,8 @@ selenium-grid:
             - bash
             - -c
             - |
-              curl -X POST 127.0.0.1:5555/se/grid/node/drain --header 'X-REGISTRATION-SECRET;' && \
-              while curl 127.0.0.1:5555/status; do sleep 5; done
+              curl -X POST 0.0.0.0:5555/se/grid/node/drain --header 'X-REGISTRATION-SECRET;' && \
+              while curl 0.0.0.0:5555/status; do sleep 5; done
 
 #jaeger-all-in-one:
   #enabled: true

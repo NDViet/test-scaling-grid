@@ -33,25 +33,19 @@ spec:
       hostAliases: {{ toYaml . | nindent 8 }}
     {{- end }}
       containers:
-        {{- if (((.Values.chromeNode).video).enabled) }}
-        - name: selenium-chrome-video
+      {{- if (((.Values.chromeNode).video).enabled) }}
+        - name: selenium-video
           {{- $imageTag := default .Values.global.seleniumGrid.videoImageTag .Values.chromeNode.video.imageTag }}
           image: {{ printf "%s:%s" .Values.chromeNode.video.imageName $imageTag }}
           imagePullPolicy: {{ .Values.chromeNode.imagePullPolicy }}
-          env:
-            - name: DISPLAY_CONTAINER_NAME
-              value: 0.0.0.0
-            - name: FILE_NAME
-              value: record_video.mp4
-            - name: POD_NAME
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.name
+        {{- with .Values.chromeNode.video.extraEnvironmentVariables }}
+          env: {{- tpl (toYaml .) $ | nindent 12 }}
+        {{- end }}
           {{- if .Values.chromeNode.video.extraVolumeMounts }}
           volumeMounts:
             {{- toYaml .Values.chromeNode.video.extraVolumeMounts | nindent 12 }}
           {{- end }}
-        {{- end }}
+      {{- end }}
         - name: selenium-chrome-node
           {{- $imageTag := default .Values.global.seleniumGrid.nodesImageTag .Values.chromeNode.imageTag }}
           image: {{ printf "%s:%s" .Values.chromeNode.imageName $imageTag }}

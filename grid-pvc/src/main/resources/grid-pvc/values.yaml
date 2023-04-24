@@ -15,3 +15,39 @@ selenium-chrome-video:
       enabled: true
       hostPath:
         path: /tmp/selenium
+
+selenium-firefox-node:
+  enabled: true
+  persistence:
+    enabled: true
+    pv:
+      enabled: true
+      hostPath:
+        path: /tmp/selenium
+
+selenium-firefox-video:
+  enabled: true
+  persistence:
+    enabled: true
+    pv:
+      enabled: true
+      hostPath:
+        path: /tmp/selenium
+
+selenium-edge-node:
+  enabled: true
+  persistence:
+    enabled: true
+    pv:
+      enabled: true
+      hostPath:
+        path: /tmp/selenium
+
+selenium-edge-video:
+  enabled: true
+  persistence:
+    enabled: true
+    pv:
+      enabled: true
+      hostPath:
+        path: /tmp/selenium
