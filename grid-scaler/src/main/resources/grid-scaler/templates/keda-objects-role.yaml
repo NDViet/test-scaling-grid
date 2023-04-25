@@ -1,0 +1,34 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: keda-objects-role
+  namespace: {{ .Release.Namespace }}
+  labels:
+    component: keda-objects-role
+    chart: {{ .Chart.Name }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+rules:
+  - apiGroups:
+      - keda.sh
+    resources:
+      - scaledjobs
+      - scaledjobs/finalizers
+      - scaledjobs/status
+    verbs:
+      - '*'
+  - apiGroups:
+      - keda.sh
+    resources:
+      - scaledobjects
+      - scaledobjects/finalizers
+      - scaledobjects/status
+    verbs:
+      - '*'
+  - apiGroups:
+      - keda.sh
+    resources:
+      - triggerauthentications
+      - triggerauthentications/status
+    verbs:
+      - '*'

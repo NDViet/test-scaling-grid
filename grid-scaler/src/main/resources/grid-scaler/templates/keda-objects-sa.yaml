@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: keda-objects-sa
+  namespace: {{ .Release.Namespace }}
+  labels:
+    component: keda-objects-sa
+    chart: {{ .Chart.Name }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}

@@ -1,0 +1,27 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: keda-objects-cleanup-job
+  namespace: {{ .Release.Namespace }}
+  labels:
+    component: keda-objects-cleanup-job
+    chart: {{ .Chart.Name }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+  annotations:
+    "helm.sh/hook": pre-delete,pre-upgrade,pre-rollback
+    "helm.sh/hook-delete-policy": hook-succeeded,hook-failed
+spec:
+  template:
+    metadata:
+      name: keda-objects-cleanup
+    spec:
+      serviceAccountName: keda-objects-sa
+      containers:
+        - name: keda-objects-cleanup
+          image: bitnami/kubectl
+          command:
+            - "bin/bash"
+            - "-c"
+            - "kubectl delete -n {{ .Release.Namespace }} scaledjobs,scaledobjects,triggerauthentications -l release={{ .Release.Name }}"
+      restartPolicy: Never

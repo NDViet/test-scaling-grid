@@ -12,7 +12,6 @@ metadata:
     heritage: {{ .Release.Service }}
   annotations:
     "helm.sh/hook": post-install,post-upgrade,post-rollback
-    "helm.sh/resource-policy": keep
 spec:
   minReplicaCount: {{ .Values.minReplicaCount }}
   maxReplicaCount: {{ .Values.maxReplicaCount }}

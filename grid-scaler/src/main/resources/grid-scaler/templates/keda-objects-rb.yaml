@@ -1,0 +1,17 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: keda-objects-rb
+  namespace: {{ .Release.Namespace }}
+  labels:
+    component: keda-objects-rb
+    chart: {{ .Chart.Name }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+subjects:
+  - kind: ServiceAccount
+    name: keda-objects-sa
+roleRef:
+  kind: Role
+  name: keda-objects-role
+  apiGroup: rbac.authorization.k8s.io
