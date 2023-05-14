@@ -1,5 +1,5 @@
 tags:
-  full: false
+  full: true
   selenium-grid: false
   ingress-nginx: false
   keda: false
@@ -62,8 +62,8 @@ selenium-grid:
             - bash
             - -c
             - |
-              curl -X POST 0.0.0.0:5555/se/grid/node/drain --header 'X-REGISTRATION-SECRET;' && \
-              while curl 0.0.0.0:5555/status; do sleep 5; done
+              curl -X POST 127.0.0.1:5555/se/grid/node/drain --header 'X-REGISTRATION-SECRET;' && \
+              while curl 127.0.0.1:5555/status; do sleep 1; done
   firefoxNode:
     video:
       enabled: true
@@ -99,8 +99,8 @@ selenium-grid:
             - bash
             - -c
             - |
-              curl -X POST 0.0.0.0:5555/se/grid/node/drain --header 'X-REGISTRATION-SECRET;' && \
-              while curl 0.0.0.0:5555/status; do sleep 5; done
+              curl -X POST 127.0.0.1:5555/se/grid/node/drain --header 'X-REGISTRATION-SECRET;' && \
+              while curl 127.0.0.1:5555/status; do sleep 1; done
   edgeNode:
     video:
       enabled: true
@@ -136,8 +136,8 @@ selenium-grid:
             - bash
             - -c
             - |
-              curl -X POST 0.0.0.0:5555/se/grid/node/drain --header 'X-REGISTRATION-SECRET;' && \
-              while curl 0.0.0.0:5555/status; do sleep 5; done
+              curl -X POST 127.0.0.1:5555/se/grid/node/drain --header 'X-REGISTRATION-SECRET;' && \
+              while curl 127.0.0.1:5555/status; do sleep 1; done
 
 #jaeger-all-in-one:
   #enabled: true

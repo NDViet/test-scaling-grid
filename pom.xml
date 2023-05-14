@@ -6,7 +6,7 @@
 
     <groupId>org.ndviet</groupId>
     <artifactId>test-scaling-grid</artifactId>
-    <version>23.4.0</version>
+    <version>23.5.0</version>
     <packaging>pom</packaging>
     <modules>
         <module>patch-selenium-grid</module>
