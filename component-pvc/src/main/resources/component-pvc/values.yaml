@@ -1,7 +1,14 @@
 global:
-  persistence: true
+  seleniumGrid:
+    persistence:
+      enabled: true
 
 persistence:
+  pv:
+    enabled: true
+    hostPath:
+      path: "-"
+    #storageClass: "-"
   enabled: true
   ## Persistent Volume Storage Class
   ## If defined, storageClassName: <storageClass>
@@ -21,9 +28,3 @@ persistence:
   ## Persistent Volume size
   ##
   size: 2Gi
-  ##
-  pv:
-    enabled: true
-    hostPath:
-      path: "-"
-    #storageClass: "-"

@@ -1,5 +1,9 @@
 global:
-  graphqlUrl: "http://selenium-router:4444/graphql"
+  seleniumGrid:
+    autoscaling:
+      useKEDA: true
+      enabled: true
+    graphqlUrl: "http://selenium-router:4444/graphql"
 
 scale-chrome-node:
   enabled: true

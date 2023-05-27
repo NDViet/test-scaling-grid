@@ -13,7 +13,7 @@
         <module>component-pvc</module>
         <module>component-scaler</module>
         <module>grid-pvc</module>
-        <module>grid-scaler</module>
+        <module>grid-autoscaling</module>
         <module>scalable-selenium-grid</module>
     </modules>
 

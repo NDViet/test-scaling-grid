@@ -9,7 +9,7 @@
         <version>23.5.0</version>
     </parent>
 
-    <artifactId>grid-scaler</artifactId>
+    <artifactId>grid-autoscaling</artifactId>
 
     <build>
         <plugins>

@@ -6,6 +6,12 @@ tags:
 
 global:
   seleniumGrid:
+    persistence:
+      enabled: true
+    autoscaling:
+      #useKEDA: true
+      enabled: true
+    graphqlUrl: "http://selenium-router:4444/graphql"
     # Image tag for browser's recording
     videoImageTag: ffmpeg-4.3.1-20230404
   selenium-grid:
@@ -16,13 +22,16 @@ global:
     #enabled: true
   keda:
     #enabled: true
-  graphqlUrl: "http://selenium-router:4444/graphql"
 
 selenium-grid:
   #enabled: true
   isolateComponents: true
   components:
     extraEnvironmentVariables:
+      - name: SE_NODE_MAX_SESSIONS
+        value: "1"
+      - name: SE_DRAIN_AFTER_SESSION_COUNT
+        value: "1"
       - name: SE_ENABLE_TRACING
         value: "true"
       - name: JAVA_OPTS
@@ -31,16 +40,16 @@ selenium-grid:
     video:
       enabled: true
       imageName: selenium/video
-      extraEnvironmentVariables:
-        - name: DISPLAY_CONTAINER_NAME
-          value: 0.0.0.0
-        - name: FILE_NAME
-          value: record_video.mp4
+      extraEnvironmentVariables: &videoExtraEnvVariables
         - name: POD_NAME
           valueFrom:
             fieldRef:
               fieldPath: metadata.name
-      extraVolumeMounts:
+        - name: DISPLAY_CONTAINER_NAME
+          value: 0.0.0.0
+        - name: FILE_NAME
+          value: $(POD_NAME).mp4
+      extraVolumeMounts: &videoExtraVolumeMounts
         - mountPath: /videos
           name: video-data-pvclaim
           subPathExpr: $(POD_NAME)
@@ -53,7 +62,7 @@ selenium-grid:
         path: /status
         port: 5555
       failureThreshold: 120
-      periodSeconds: 5
+      periodSeconds: 2
     terminationGracePeriodSeconds: 3600
     lifecycle:
       preStop:
@@ -68,19 +77,8 @@ selenium-grid:
     video:
       enabled: true
       imageName: selenium/video
-      extraEnvironmentVariables:
-        - name: DISPLAY_CONTAINER_NAME
-          value: 0.0.0.0
-        - name: FILE_NAME
-          value: record_video.mp4
-        - name: POD_NAME
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.name
-      extraVolumeMounts:
-        - mountPath: /videos
-          name: video-data-pvclaim
-          subPathExpr: $(POD_NAME)
+      extraEnvironmentVariables: *videoExtraEnvVariables
+      extraVolumeMounts: *videoExtraVolumeMounts
       extraVolumes:
         - name: video-data-pvclaim
           persistentVolumeClaim:
@@ -90,7 +88,7 @@ selenium-grid:
         path: /status
         port: 5555
       failureThreshold: 120
-      periodSeconds: 5
+      periodSeconds: 2
     terminationGracePeriodSeconds: 3600
     lifecycle:
       preStop:
@@ -105,19 +103,8 @@ selenium-grid:
     video:
       enabled: true
       imageName: selenium/video
-      extraEnvironmentVariables:
-        - name: DISPLAY_CONTAINER_NAME
-          value: 0.0.0.0
-        - name: FILE_NAME
-          value: record_video.mp4
-        - name: POD_NAME
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.name
-      extraVolumeMounts:
-        - mountPath: /videos
-          name: video-data-pvclaim
-          subPathExpr: $(POD_NAME)
+      extraEnvironmentVariables: *videoExtraEnvVariables
+      extraVolumeMounts: *videoExtraVolumeMounts
       extraVolumes:
         - name: video-data-pvclaim
           persistentVolumeClaim:
@@ -127,7 +114,7 @@ selenium-grid:
         path: /status
         port: 5555
       failureThreshold: 120
-      periodSeconds: 5
+      periodSeconds: 2
     terminationGracePeriodSeconds: 3600
     lifecycle:
       preStop:
@@ -158,7 +145,7 @@ ingress-nginx:
 #keda:
   #enabled: true
 
-grid-scaler:
+grid-autoscaling:
   #enabled: true
   scale-chrome-node:
     enabled: true

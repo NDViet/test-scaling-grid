@@ -1,3 +1,4 @@
+{{- if or .Values.global.seleniumGrid.autoscaling.enabled .Values.global.seleniumGrid.autoscaling.useKEDA }}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -10,7 +11,7 @@ metadata:
     heritage: {{ .Release.Service }}
   annotations:
     "helm.sh/hook": pre-delete,pre-upgrade,pre-rollback
-    "helm.sh/hook-delete-policy": hook-succeeded,hook-failed
+    "helm.sh/hook-delete-policy": hook-succeeded,hook-failed,before-hook-creation
 spec:
   template:
     metadata:
@@ -25,3 +26,4 @@ spec:
             - "-c"
             - "kubectl delete -n {{ .Release.Namespace }} scaledjobs,scaledobjects,triggerauthentications -l release={{ .Release.Name }}"
       restartPolicy: Never
+{{- end }}
