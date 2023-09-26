@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.ndviet</groupId>
         <artifactId>test-scaling-grid</artifactId>
-        <version>23.5.0</version>
+        <version>${revision}</version>
     </parent>
 
     <artifactId>patch-selenium-grid</artifactId>
@@ -18,6 +18,11 @@
         <!--        process-resources: replace patch files to origin chart templates -->
         <!--        package: package-patched-chart -->
         <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>templating-maven-plugin</artifactId>
+            </plugin>
+
             <plugin>
                 <artifactId>maven-antrun-plugin</artifactId>
                 <executions>
@@ -45,8 +50,8 @@
                         <configuration>
                             <target>
                                 <untar compression="gzip"
-                                       dest="${project.basedir}/src/main/resources/patch-selenium-grid/charts">
-                                    <fileset dir="${project.basedir}/src/main/resources/patch-selenium-grid/charts">
+                                       dest="${project.basedir}/target/classes/patch-selenium-grid/charts">
+                                    <fileset dir="${project.basedir}/target/classes/patch-selenium-grid/charts">
                                         <include name="*.tgz"/>
                                     </fileset>
                                 </untar>
@@ -61,7 +66,7 @@
                         </goals>
                         <configuration>
                             <target>
-                                <copy todir="${project.basedir}/src/main/resources/patch-selenium-grid/charts/selenium-grid/templates">
+                                <copy todir="${project.build.directory}/classes/patch-selenium-grid/charts/selenium-grid/templates">
                                     <fileset
                                             dir="${project.basedir}/src/main/resources/patch-selenium-grid/patch/templates"/>
                                 </copy>
@@ -83,10 +88,10 @@
                             <goal>dependency-build</goal>
                         </goals>
                         <configuration>
-                            <chartDirectory>${project.basedir}/src/main/resources</chartDirectory>
                             <chartVersion>${project.version}</chartVersion>
                             <outputDirectory>${project.parent.build.directory}/helm/repo</outputDirectory>
                             <useLocalHelmBinary>true</useLocalHelmBinary>
+                            <autoDetectLocalHelmBinary>true</autoDetectLocalHelmBinary>
                         </configuration>
                     </execution>
                     <execution>
@@ -97,9 +102,6 @@
                             <goal>package</goal>
                         </goals>
                         <configuration>
-                            <chartDirectory>
-                                ${project.basedir}/src/main/resources/patch-selenium-grid/charts/selenium-grid
-                            </chartDirectory>
                             <chartVersion>${chart.selenium.version}</chartVersion>
                             <outputDirectory>${project.parent.build.directory}/helm/repo</outputDirectory>
                             <useLocalHelmBinary>true</useLocalHelmBinary>

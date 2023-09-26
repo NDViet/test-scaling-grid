@@ -2,5 +2,5 @@ apiVersion: v2
 name: component-scaler
 description: A Helm chart for Kubernetes
 type: application
-version: @chart.this.version@
-appVersion: "@chart.this.version@"
+version: ${chart.this.version}
+appVersion: "${chart.this.version}"

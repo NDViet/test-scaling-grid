@@ -6,13 +6,17 @@
     <parent>
         <groupId>org.ndviet</groupId>
         <artifactId>test-scaling-grid</artifactId>
-        <version>23.5.0</version>
+        <version>${revision}</version>
     </parent>
 
     <artifactId>scalable-selenium-grid</artifactId>
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>templating-maven-plugin</artifactId>
+            </plugin>
             <plugin>
                 <artifactId>maven-antrun-plugin</artifactId>
                 <executions>
@@ -58,7 +62,6 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <chartDirectory>${project.basedir}/src/main/resources</chartDirectory>
                     <chartVersion>${project.version}</chartVersion>
                     <outputDirectory>${project.parent.build.directory}/helm/repo</outputDirectory>
                     <lintStrict>true</lintStrict>

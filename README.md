@@ -1,5 +1,7 @@
 This umbrella chart is created to deploy my motivation for a Scalable Selenium Grid, details as below
 
+Fortunately, [Selenium-Grid Helm Chart](charts/selenium-grid/README.md) added autoscaling in default values.yaml from version [0.19.0](https://github.com/SeleniumHQ/docker-selenium/blob/trunk/charts/selenium-grid/CHANGELOG.md#heavy_check_mark-0190)
+
 ![Scalable Grid](docs/central_grid_diagram.png)
 
 More details on my motivation are mentioned in the presentation [here](docs/Topic_Scalable-Parallel-AT_Publish.pdf).

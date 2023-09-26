@@ -6,7 +6,7 @@
 
     <groupId>org.ndviet</groupId>
     <artifactId>test-scaling-grid</artifactId>
-    <version>23.5.0</version>
+    <version>${revision}</version>
     <packaging>pom</packaging>
     <modules>
         <module>patch-selenium-grid</module>
@@ -18,6 +18,7 @@
     </modules>
 
     <properties>
+        <revision>23.9.26</revision>
         <exec.executable>bash</exec.executable>
         <exec.overrides>-c</exec.overrides>
         <chart.this.version>${project.version}</chart.this.version>
@@ -57,39 +58,29 @@
         <pluginManagement>
             <plugins>
                 <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>templating-maven-plugin</artifactId>
+                    <version>1.0.0</version>
+                    <extensions>true</extensions>
+                    <executions>
+                        <execution>
+                            <id>chart-src-template</id>
+                            <phase>initialize</phase>
+                            <goals>
+                                <goal>filter-sources</goal>
+                            </goals>
+                            <configuration>
+                                <sourceDirectory>${basedir}/src/main/resources</sourceDirectory>
+                                <outputDirectory>${project.build.directory}/classes</outputDirectory>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <plugin>
                     <artifactId>maven-antrun-plugin</artifactId>
                     <version>3.1.0</version>
                     <executions>
-                        <execution>
-                            <id>generate-chart-yaml</id>
-                            <phase>validate</phase>
-                            <configuration>
-                                <target>
-                                    <copy file="src/main/resources/${project.name}/Chart_template.yaml"
-                                          tofile="src/main/resources/${project.name}/Chart.yaml">
-                                        <filterset>
-                                            <filter token="chart.this.version" value="${chart.this.version}"/>
-                                            <filter token="chart.selenium.name" value="${chart.selenium.name}"/>
-                                            <filter token="chart.selenium.repository" value="${chart.selenium.repository}"/>
-                                            <filter token="chart.selenium.version" value="${chart.selenium.version}"/>
-                                            <filter token="chart.jaeger.name" value="${chart.jaeger.name}"/>
-                                            <filter token="chart.jaeger.repository" value="${chart.jaeger.repository}"/>
-                                            <filter token="chart.jaeger.version" value="${chart.jaeger.version}"/>
-                                            <filter token="chart.ingress.name" value="${chart.ingress.name}"/>
-                                            <filter token="chart.ingress.repository" value="${chart.ingress.repository}"/>
-                                            <filter token="chart.ingress.version" value="${chart.ingress.version}"/>
-                                            <filter token="chart.keda.name" value="${chart.keda.name}"/>
-                                            <filter token="chart.keda.repository" value="${chart.keda.repository}"/>
-                                            <filter token="chart.keda.version" value="${chart.keda.version}"/>
-                                        </filterset>
-                                    </copy>
-                                </target>
-                            </configuration>
-                            <goals>
-                                <goal>run</goal>
-                            </goals>
-                        </execution>
-
                         <execution>
                             <id>clean-chart-lock</id>
                             <phase>clean</phase>
@@ -99,7 +90,6 @@
                                             dir="src/main/resources/${project.name}/charts"/>
                                     <delete failonerror="false">
                                         <fileset dir="." includes="**/*.lock"/>
-                                        <fileset dir="." includes="**/Chart.yaml"/>
                                     </delete>
                                 </target>
                             </configuration>
@@ -114,6 +104,13 @@
                     <groupId>io.kokuwa.maven</groupId>
                     <artifactId>helm-maven-plugin</artifactId>
                     <version>6.6.1</version>
+                    <extensions>true</extensions>
+                    <configuration>
+                        <chartDirectory>${project.build.directory}/classes</chartDirectory>
+                        <chartVersion>${project.version}</chartVersion>
+                        <useLocalHelmBinary>true</useLocalHelmBinary>
+                        <autoDetectLocalHelmBinary>true</autoDetectLocalHelmBinary>
+                    </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>

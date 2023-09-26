@@ -2,50 +2,50 @@ apiVersion: v2
 name: scalable-selenium-grid
 description: A Helm chart for Kubernetes
 type: application
-version: @chart.this.version@
-appVersion: "@chart.this.version@"
+version: ${chart.this.version}
+appVersion: "${chart.this.version}"
 dependencies:
   - condition: global.selenium-grid.enabled, selenium-grid.enabled
-    name: @chart.selenium.name@
-    repository: file://../../../../../patch-selenium-grid/src/main/resources/patch-selenium-grid/charts/selenium-grid
-    version: @chart.selenium.version@
+    name: ${chart.selenium.name}
+    repository: file://../../../../patch-selenium-grid/target/classes/patch-selenium-grid/charts/selenium-grid
+    version: ${chart.selenium.version}
     tags:
       - full
       - selenium-grid
   - condition: global.seleniumGrid.autoscaling.enabled, global.seleniumGrid.autoscaling.useKEDA, keda.enabled
-    name: @chart.keda.name@
-    repository: @chart.keda.repository@
-    version: @chart.keda.version@
+    name: ${chart.keda.name}
+    repository: ${chart.keda.repository}
+    version: ${chart.keda.version}
     tags:
       - full
       - keda
       - grid-autoscaling
   - condition: global.seleniumGrid.autoscaling.enabled, grid-autoscaling.enabled
     name: grid-autoscaling
-    repository: file://../../../../../grid-autoscaling/src/main/resources/grid-autoscaling
-    version: @chart.this.version@
+    repository: file://../../../../grid-autoscaling/target/classes/grid-autoscaling
+    version: ${chart.this.version}
     tags:
       - full
       - keda
       - grid-autoscaling
   - condition: global.seleniumGrid.persistence.enabled, grid-pvc.enabled
     name: grid-pvc
-    repository: file://../../../../../grid-pvc/src/main/resources/grid-pvc
-    version: @chart.this.version@
+    repository: file://../../../../grid-pvc/target/classes/grid-pvc
+    version: ${chart.this.version}
     tags:
       - full
       - grid-pvc
   - condition: global.jaeger-all-in-one.enabled, jaeger-all-in-one.enabled
-    name: @chart.jaeger.name@
-    repository: @chart.jaeger.repository@
-    version: @chart.jaeger.version@
+    name: ${chart.jaeger.name}
+    repository: ${chart.jaeger.repository}
+    version: ${chart.jaeger.version}
     tags:
       - full
       - jaeger-all-in-one
   - condition: global.ingress-nginx.enabled, ingress-nginx.enabled
-    name: @chart.ingress.name@
-    repository: @chart.ingress.repository@
-    version: @chart.ingress.version@
+    name: ${chart.ingress.name}
+    repository: ${chart.ingress.repository}
+    version: ${chart.ingress.version}
     tags:
       - full
       - ingress-nginx

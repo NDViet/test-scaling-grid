@@ -2,36 +2,36 @@ apiVersion: v2
 name: grid-pvc
 description: A Helm chart for Kubernetes
 type: application
-version: @chart.this.version@
-appVersion: "@chart.this.version@"
+version: ${chart.this.version}
+appVersion: "${chart.this.version}"
 dependencies:
   - alias: selenium-chrome-node
     condition: global.seleniumGrid.persistence.enabled,selenium-chrome-node.persistence.enabled
     name: component-pvc
-    repository: file://../../../../../component-pvc/src/main/resources/component-pvc
-    version: @chart.this.version@
+    repository: file://../../../../component-pvc/target/classes/component-pvc
+    version: ${chart.this.version}
   - alias: selenium-chrome-video
     condition: global.seleniumGrid.persistence.enabled,selenium-chrome-video.persistence.enabled
     name: component-pvc
-    repository: file://../../../../../component-pvc/src/main/resources/component-pvc
-    version: @chart.this.version@
+    repository: file://../../../../component-pvc/target/classes/component-pvc
+    version: ${chart.this.version}
   - alias: selenium-firefox-node
     condition: global.seleniumGrid.persistence.enabled,selenium-firefox-node.persistence.enabled
     name: component-pvc
-    repository: file://../../../../../component-pvc/src/main/resources/component-pvc
-    version: @chart.this.version@
+    repository: file://../../../../component-pvc/target/classes/component-pvc
+    version: ${chart.this.version}
   - alias: selenium-firefox-video
     condition: global.seleniumGrid.persistence.enabled,selenium-firefox-video.persistence.enabled
     name: component-pvc
-    repository: file://../../../../../component-pvc/src/main/resources/component-pvc
-    version: @chart.this.version@
+    repository: file://../../../../component-pvc/target/classes/component-pvc
+    version: ${chart.this.version}
   - alias: selenium-edge-node
     condition: global.seleniumGrid.persistence.enabled,selenium-edge-node.persistence.enabled
     name: component-pvc
-    repository: file://../../../../../component-pvc/src/main/resources/component-pvc
-    version: @chart.this.version@
+    repository: file://../../../../component-pvc/target/classes/component-pvc
+    version: ${chart.this.version}
   - alias: selenium-edge-video
     condition: global.seleniumGrid.persistence.enabled,selenium-edge-video.persistence.enabled
     name: component-pvc
-    repository: file://../../../../../component-pvc/src/main/resources/component-pvc
-    version: @chart.this.version@
+    repository: file://../../../../component-pvc/target/classes/component-pvc
+    version: ${chart.this.version}
