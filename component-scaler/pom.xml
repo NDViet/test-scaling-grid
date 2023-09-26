@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.ndviet</groupId>
         <artifactId>test-scaling-grid</artifactId>
-        <version>${revision}</version>
+        <version>23.5.0</version>
     </parent>
 
     <artifactId>component-scaler</artifactId>
