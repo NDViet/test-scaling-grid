@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: selenium-configurations
+  labels:
+    release: {{ .Release.Name }}
+    namespace: {{ .Release.Namespace }}
+    heritage: {{ .Release.Service }}
+data:
+  supervisord.conf: |-
+    {{- $.Files.Get "configurations/Video/supervisord.conf" | nindent 6 -}}

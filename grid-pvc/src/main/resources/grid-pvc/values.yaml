@@ -3,50 +3,11 @@ global:
     persistence:
       enabled: true
 
-selenium-chrome-node:
+selenium-node:
   persistence:
+    size: 15Gi
     #enabled: true
     pv:
       enabled: true
       hostPath:
-        path: /tmp/selenium
-
-selenium-chrome-video:
-  persistence:
-    #enabled: true
-    pv:
-      enabled: true
-      hostPath:
-        path: /tmp/selenium
-
-selenium-firefox-node:
-  persistence:
-    #enabled: true
-    pv:
-      enabled: true
-      hostPath:
-        path: /tmp/selenium
-
-selenium-firefox-video:
-  persistence:
-    #enabled: true
-    pv:
-      enabled: true
-      hostPath:
-        path: /tmp/selenium
-
-selenium-edge-node:
-  persistence:
-    #enabled: true
-    pv:
-      enabled: true
-      hostPath:
-        path: /tmp/selenium
-
-selenium-edge-video:
-  persistence:
-    #enabled: true
-    pv:
-      enabled: true
-      hostPath:
-        path: /tmp/selenium
+        path: /testops/local/selenium

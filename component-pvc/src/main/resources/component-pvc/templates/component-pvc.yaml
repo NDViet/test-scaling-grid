@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ template "component-pvc.name" . }}-data-pvclaim
+  name: {{ template "component-pvc.name" . }}-pvc
   labels:
     app: {{ template "component-pvc.name" . }}
     chart: {{ template "component-pvc.chart" . }}
@@ -11,7 +11,7 @@ metadata:
     heritage: {{ .Release.Service }}
 spec:
   accessModes:
-    - ReadWriteOnce
+    - {{ .Values.persistence.accessModes | quote }}
   resources:
     requests:
   {{- if not .Values.persistence.size }}

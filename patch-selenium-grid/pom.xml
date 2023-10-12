@@ -66,9 +66,11 @@
                         </goals>
                         <configuration>
                             <target>
-                                <copy todir="${project.build.directory}/classes/patch-selenium-grid/charts/selenium-grid/templates">
+                                <copy todir="${project.build.directory}/classes/patch-selenium-grid/charts/selenium-grid">
                                     <fileset
-                                            dir="${project.basedir}/src/main/resources/patch-selenium-grid/patch/templates"/>
+                                            dir="${project.basedir}/src/main/resources/patch-selenium-grid/patch"
+                                            includes="**/*"
+                                    />
                                 </copy>
                             </target>
                         </configuration>

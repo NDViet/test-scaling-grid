@@ -18,13 +18,13 @@
     </modules>
 
     <properties>
-        <revision>23.9.26</revision>
+        <revision>23.10.12</revision>
         <exec.executable>bash</exec.executable>
         <exec.overrides>-c</exec.overrides>
         <chart.this.version>${project.version}</chart.this.version>
         <chart.selenium.name>selenium-grid</chart.selenium.name>
         <chart.selenium.repository>https://www.selenium.dev/docker-selenium</chart.selenium.repository>
-        <chart.selenium.version>0.15.8</chart.selenium.version>
+        <chart.selenium.version>0.22.0</chart.selenium.version>
         <chart.jaeger.name>jaeger-all-in-one</chart.jaeger.name>
         <chart.jaeger.repository>https://raw.githubusercontent.com/hansehe/jaeger-all-in-one/master/helm/charts</chart.jaeger.repository>
         <chart.jaeger.version>0.1.8</chart.jaeger.version>

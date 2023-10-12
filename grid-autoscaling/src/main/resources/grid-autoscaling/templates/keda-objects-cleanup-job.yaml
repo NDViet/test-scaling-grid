@@ -1,4 +1,4 @@
-{{- if or .Values.global.seleniumGrid.autoscaling.enabled .Values.global.seleniumGrid.autoscaling.useKEDA }}
+{{- if or .Values.global.seleniumGrid.autoscaling.enableWithExistingKEDA .Values.global.seleniumGrid.autoscaling.enabled }}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -24,6 +24,6 @@ spec:
           command:
             - "bin/bash"
             - "-c"
-            - "kubectl delete -n {{ .Release.Namespace }} scaledjobs,scaledobjects,triggerauthentications -l release={{ .Release.Name }}"
+            - "kubectl delete -n {{ .Release.Namespace }} scaledjobs,scaledobjects,triggerauthentications -l app.kubernetes.io/instance={{ .Release.Name }} --ignore-not-found=true"
       restartPolicy: Never
 {{- end }}
