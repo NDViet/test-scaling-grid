@@ -33,7 +33,7 @@
         <chart.ingress.version>4.0.6</chart.ingress.version>
         <chart.keda.name>keda</chart.keda.name>
         <chart.keda.repository>https://kedacore.github.io/charts</chart.keda.repository>
-        <chart.keda.version>2.10.1</chart.keda.version>
+        <chart.keda.version>2.12.0</chart.keda.version>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

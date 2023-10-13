@@ -7,5 +7,4 @@ metadata:
     namespace: {{ .Release.Namespace }}
     heritage: {{ .Release.Service }}
 data:
-  supervisord.conf: |-
-    {{- $.Files.Get "configurations/Video/supervisord.conf" | nindent 6 -}}
+{{ (.Files.Glob "configurations/Video/*").AsConfig | indent 2 }}

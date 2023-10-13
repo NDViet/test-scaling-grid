@@ -34,6 +34,7 @@ selenium-grid:
     deregisterLifecycle: {}
   components:
     extraEnvironmentVariables: &extraEnvironmentVariables
+      # Strategy: Node serve only 1 session and to be terminated
       - name: SE_NODE_MAX_SESSIONS
         value: "1"
       - name: SE_DRAIN_AFTER_SESSION_COUNT
@@ -42,10 +43,30 @@ selenium-grid:
         value: "true"
       - name: JAVA_OPTS
         value: "-Dotel.traces.exporter=jaeger -Dotel.exporter.jaeger.endpoint=http://{{ .Release.Name }}-jaeger-all-in-one-headless:14250 -Dotel.resource.attributes=service.name=selenium"
-      - name: SE_NODE_RECORD_VIDEO
+      - name: SE_VIDEO_RECORD
         value: "true"
+      - name: POD_NAME
+        valueFrom:
+          fieldRef:
+            fieldPath: metadata.name
+      - name: POD_IP
+        valueFrom:
+          fieldRef:
+            fieldPath: status.podIP
+      - name: DISPLAY_CONTAINER_NAME
+        value: $(POD_IP)
+#      - name: FILE_NAME
+#        value: $(POD_IP)_$(POD_NAME).mp4
 
   chromeNode:
+    maxReplicaCount: &maxReplicaCount 10
+    resources: &resources
+      requests:
+        memory: "512Mi"
+        cpu: "0.5"
+      limits:
+        memory: "1Gi"
+        cpu: "1"
     extraEnvironmentVariables: *extraEnvironmentVariables
     ports: &nodePorts
       - 99
@@ -58,23 +79,14 @@ selenium-grid:
         imagePullPolicy: IfNotPresent
         ports:
           - containerPort: 9000
-        env:
-          - name: POD_NAME
-            valueFrom:
-              fieldRef:
-                fieldPath: metadata.name
-          - name: POD_IP
-            valueFrom:
-              fieldRef:
-                fieldPath: status.podIP
-          - name: DISPLAY_CONTAINER_NAME
-            value: $(POD_IP)
-          - name: FILE_NAME
-            value: $(POD_IP)_$(POD_NAME).mp4
+        env: *extraEnvironmentVariables
         volumeMounts:
           - name: videos
             mountPath: /videos
             subPathExpr: $(POD_NAME)
+          - name: configurations
+            mountPath: /opt/bin/video.sh
+            subPath: video.sh
           - name: configurations
             mountPath: /etc/supervisord.conf
             subPath: supervisord.conf
@@ -94,6 +106,8 @@ selenium-grid:
       periodSeconds: 2
 
   firefoxNode:
+    maxReplicaCount: *maxReplicaCount
+    resources: *resources
     extraEnvironmentVariables: *extraEnvironmentVariables
     ports: *nodePorts
     sidecars: *nodeVideoRecord
@@ -101,6 +115,8 @@ selenium-grid:
     startupProbe: *nodeStartupProbe
 
   edgeNode:
+    maxReplicaCount: *maxReplicaCount
+    resources: *resources
     extraEnvironmentVariables: *extraEnvironmentVariables
     ports: *nodePorts
     sidecars: *nodeVideoRecord
