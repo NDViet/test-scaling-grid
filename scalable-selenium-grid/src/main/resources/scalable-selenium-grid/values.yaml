@@ -31,19 +31,39 @@ selenium-grid:
     scalingType: job
     annotations:
       helm.sh/hook: post-install,post-upgrade,post-rollback
-    deregisterLifecycle: {}
+    scaledJobOptions:
+      minReplicaCount: &minReplicaCount 0
+      successfulJobsHistoryLimit: 5
+      failedJobsHistoryLimit: 5
+      pollingInterval: 20
+      scalingStrategy:
+        strategy: accurate
+    deregisterLifecycle:
+      preStop:
+        exec:
+          command:
+            - bash
+            - -c
+            - |
+              curl -X POST 127.0.0.1:5555/se/grid/node/drain --header 'X-REGISTRATION-SECRET;' && \
+              curl -X POST 127.0.0.1:9000/drain --header 'X-REGISTRATION-SECRET;' && \
+              while curl 127.0.0.1:5555/status; do sleep 1; done;
   components:
     extraEnvironmentVariables: &extraEnvironmentVariables
       # Strategy: Node serve only 1 session and to be terminated
-      - name: SE_NODE_MAX_SESSIONS
-        value: "1"
-      - name: SE_DRAIN_AFTER_SESSION_COUNT
+#      - name: SE_NODE_SESSION_TIMEOUT
+#        value: "300"
+#      - name: SE_NODE_OVERRIDE_MAX_SESSIONS
+#        value: "true"
+#      - name: SE_NODE_MAX_SESSIONS
+#        value: "1"
+      - name: DRAIN_AFTER_SESSION_COUNT #must add this to drain video together with session
         value: "1"
       - name: SE_ENABLE_TRACING
         value: "true"
       - name: JAVA_OPTS
         value: "-Dotel.traces.exporter=jaeger -Dotel.exporter.jaeger.endpoint=http://{{ .Release.Name }}-jaeger-all-in-one-headless:14250 -Dotel.resource.attributes=service.name=selenium"
-      - name: SE_VIDEO_RECORD
+      - name: SE_VIDEO_RECORD #must add this to enable video recording
         value: "true"
       - name: POD_NAME
         valueFrom:
@@ -59,11 +79,12 @@ selenium-grid:
 #        value: $(POD_IP)_$(POD_NAME).mp4
 
   chromeNode:
-    maxReplicaCount: &maxReplicaCount 10
+    maxReplicaCount: &maxReplicaCount 8
+    minReplicaCount: *minReplicaCount
     resources: &resources
       requests:
-        memory: "512Mi"
-        cpu: "0.5"
+        memory: "1Gi"
+        cpu: "1"
       limits:
         memory: "1Gi"
         cpu: "1"
@@ -78,18 +99,27 @@ selenium-grid:
         image: *videoImage
         imagePullPolicy: IfNotPresent
         ports:
-          - containerPort: 9000
+          - containerPort: &videoContainerPort 9000
         env: *extraEnvironmentVariables
         volumeMounts:
           - name: videos
             mountPath: /videos
-            subPathExpr: $(POD_NAME)
+#            subPathExpr: $(POD_NAME)
           - name: configurations
             mountPath: /opt/bin/video.sh
             subPath: video.sh
           - name: configurations
+            mountPath: /opt/bin/video_ready.py
+            subPath: video_ready.py
+          - name: configurations
             mountPath: /etc/supervisord.conf
             subPath: supervisord.conf
+        startupProbe:
+          httpGet:
+            path: /status
+            port: *videoContainerPort
+          failureThreshold: 120
+          periodSeconds: 1
     extraVolumes: &nodeVolumes
       - name: videos
         persistentVolumeClaim:
@@ -103,10 +133,11 @@ selenium-grid:
         path: /status
         port: 5555
       failureThreshold: 120
-      periodSeconds: 2
+      periodSeconds: 1
 
   firefoxNode:
     maxReplicaCount: *maxReplicaCount
+    minReplicaCount: *minReplicaCount
     resources: *resources
     extraEnvironmentVariables: *extraEnvironmentVariables
     ports: *nodePorts
@@ -116,6 +147,7 @@ selenium-grid:
 
   edgeNode:
     maxReplicaCount: *maxReplicaCount
+    minReplicaCount: *minReplicaCount
     resources: *resources
     extraEnvironmentVariables: *extraEnvironmentVariables
     ports: *nodePorts
@@ -125,6 +157,9 @@ selenium-grid:
 
 #jaeger-all-in-one:
   #enabled: true
+
+#keda:
+#  enabled: true
 
 ingress-nginx:
   #enabled: true
@@ -138,6 +173,3 @@ ingress-nginx:
   tcp:
     4444: "{{ .Release.Namespace }}/selenium-router:4444"
     16686: "{{ .Release.Namespace }}/{{ .Release.Name }}-jaeger-all-in-one-headless:16686"
-
-#keda:
-  #enabled: true
