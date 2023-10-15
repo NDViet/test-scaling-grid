@@ -1,4 +1,4 @@
-{{- if or .Values.global.seleniumGrid.autoscaling.enabled .Values.global.seleniumGrid.autoscaling.useKEDA }}
+{{- if or .Values.global.seleniumGrid.autoscaling.enableWithExistingKEDA .Values.global.seleniumGrid.autoscaling.enabled }}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -11,12 +11,14 @@ metadata:
     heritage: {{ .Release.Service }}
   annotations:
     "helm.sh/hook": pre-delete,pre-upgrade,pre-rollback
+    "helm.sh/hook-weight": "-1"
     "helm.sh/hook-delete-policy": hook-succeeded,hook-failed,before-hook-creation
 spec:
   template:
     metadata:
       name: keda-objects-cleanup
     spec:
+      activeDeadlineSeconds: 30
       serviceAccountName: keda-objects-sa
       containers:
         - name: keda-objects-cleanup
@@ -24,6 +26,6 @@ spec:
           command:
             - "bin/bash"
             - "-c"
-            - "kubectl delete -n {{ .Release.Namespace }} scaledjobs,scaledobjects,triggerauthentications -l release={{ .Release.Name }}"
+            - "kubectl delete -n {{ .Release.Namespace }} scaledjobs,scaledobjects,triggerauthentications -l app.kubernetes.io/instance={{ .Release.Name }} --ignore-not-found=true"
       restartPolicy: Never
 {{- end }}

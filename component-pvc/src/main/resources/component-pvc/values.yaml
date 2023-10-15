@@ -23,8 +23,7 @@ persistence:
   annotations:
   ## Persistent Volume Access Mode
   ##
-  accessModes:
-    - ReadWriteOnce
+  accessModes: ReadWriteMany
   ## Persistent Volume size
   ##
   size: 2Gi

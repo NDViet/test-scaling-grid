@@ -1,3 +1,4 @@
+{{- if or .Values.global.seleniumGrid.autoscaling.enableWithExistingKEDA .Values.global.seleniumGrid.autoscaling.enabled }}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
@@ -15,3 +16,4 @@ roleRef:
   kind: Role
   name: keda-objects-role
   apiGroup: rbac.authorization.k8s.io
+{{- end }}

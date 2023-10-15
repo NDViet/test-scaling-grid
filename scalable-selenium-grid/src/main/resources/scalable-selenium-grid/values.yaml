@@ -1,19 +1,17 @@
 tags:
   full: true
   selenium-grid: false
+  jaeger-all-in-one: false
   ingress-nginx: false
   keda: false
 
 global:
   seleniumGrid:
     persistence:
-      enabled: true
+      enabled: &persistence true
     autoscaling:
-      #useKEDA: true
-      enabled: true
-    graphqlUrl: "http://selenium-router:4444/graphql"
-    # Image tag for browser's recording
-    videoImageTag: ffmpeg-4.3.1-20230404
+      enableWithExistingKEDA: &enableWithExistingKEDA true
+    videoImage: &videoImage "ndviet/video:ffmpeg-4.4.3-20231012"
   selenium-grid:
     #enabled: true
   jaeger-all-in-one:
@@ -23,111 +21,155 @@ global:
   keda:
     #enabled: true
 
+grid-pvc:
+  selenium-node: #claimName to be used by selenium-grid.node.extraVolumes
+    persistence:
+      enabled: *persistence
+      size: 15Gi
+      pv:
+        enabled: *persistence
+        hostPath:
+          path: /testops/local/selenium
+
 selenium-grid:
   #enabled: true
+  basicAuth:
+    enabled: false
   isolateComponents: true
+  autoscaling:
+    enableWithExistingKEDA: *enableWithExistingKEDA
+    scalingType: job
+    annotations:
+      helm.sh/hook: post-install,post-upgrade,post-rollback
+    scaledJobOptions:
+      minReplicaCount: &minReplicaCount 0
+      successfulJobsHistoryLimit: 5
+      failedJobsHistoryLimit: 5
+      pollingInterval: 20
+      scalingStrategy:
+        strategy: accurate
+    deregisterLifecycle:
+      preStop:
+        exec:
+          command:
+            - bash
+            - -c
+            - |
+              curl -X POST 127.0.0.1:5555/se/grid/node/drain --header 'X-REGISTRATION-SECRET;' && \
+              curl -X POST 127.0.0.1:9000/drain --header 'X-REGISTRATION-SECRET;' && \
+              while curl 127.0.0.1:5555/status; do sleep 1; done;
   components:
-    extraEnvironmentVariables:
+    extraEnvironmentVariables: &extraEnvironmentVariables
+      # Strategy: Node serve only 1 session and to be terminated
+#      - name: SE_NODE_SESSION_TIMEOUT
+#        value: "300"
+#      - name: SE_NODE_OVERRIDE_MAX_SESSIONS
+#        value: "true"
       - name: SE_NODE_MAX_SESSIONS
         value: "1"
-      - name: SE_DRAIN_AFTER_SESSION_COUNT
+      - name: DRAIN_AFTER_SESSION_COUNT #must add this to drain video together with session
         value: "1"
       - name: SE_ENABLE_TRACING
         value: "true"
       - name: JAVA_OPTS
         value: "-Dotel.traces.exporter=jaeger -Dotel.exporter.jaeger.endpoint=http://{{ .Release.Name }}-jaeger-all-in-one-headless:14250 -Dotel.resource.attributes=service.name=selenium"
+      - name: SE_VIDEO_RECORD #must add this to enable video recording
+        value: "true"
+      - name: POD_NAME
+        valueFrom:
+          fieldRef:
+            fieldPath: metadata.name
+      - name: POD_IP
+        valueFrom:
+          fieldRef:
+            fieldPath: status.podIP
+      - name: DISPLAY_CONTAINER_NAME
+        value: $(POD_IP)
+#      - name: FILE_NAME
+#        value: $(POD_IP)_$(POD_NAME).mp4
+
   chromeNode:
-    video:
-      enabled: true
-      imageName: selenium/video
-      extraEnvironmentVariables: &videoExtraEnvVariables
-        - name: POD_NAME
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.name
-        - name: DISPLAY_CONTAINER_NAME
-          value: 0.0.0.0
-        - name: FILE_NAME
-          value: $(POD_NAME).mp4
-      extraVolumeMounts: &videoExtraVolumeMounts
-        - mountPath: /videos
-          name: video-data-pvclaim
-          subPathExpr: $(POD_NAME)
-      extraVolumes:
-        - name: video-data-pvclaim
-          persistentVolumeClaim:
-            claimName: selenium-chrome-video-data-pvclaim
-    startupProbe:
+    maxReplicaCount: &maxReplicaCount 8
+    minReplicaCount: *minReplicaCount
+    resources: &resources
+      requests:
+        memory: "1Gi"
+        cpu: "1"
+      limits:
+        memory: "1Gi"
+        cpu: "1"
+    extraEnvironmentVariables: *extraEnvironmentVariables
+    ports: &nodePorts
+      - 99
+      - 5555
+      - 5900
+      - 7900
+    sidecars: &nodeVideoRecord
+      - name: video
+        image: *videoImage
+        imagePullPolicy: IfNotPresent
+        ports:
+          - containerPort: &videoContainerPort 9000
+        env: *extraEnvironmentVariables
+        volumeMounts:
+          - name: videos
+            mountPath: /videos
+#            subPathExpr: $(POD_NAME)
+          - name: configurations
+            mountPath: /opt/bin/video.sh
+            subPath: video.sh
+          - name: configurations
+            mountPath: /opt/bin/video_ready.py
+            subPath: video_ready.py
+          - name: configurations
+            mountPath: /etc/supervisord.conf
+            subPath: supervisord.conf
+        startupProbe:
+          httpGet:
+            path: /status
+            port: *videoContainerPort
+          failureThreshold: 120
+          periodSeconds: 1
+    extraVolumes: &nodeVolumes
+      - name: videos
+        persistentVolumeClaim:
+          claimName: "selenium-node"
+      - name: configurations
+        configMap:
+          name: "selenium-configurations"
+          defaultMode: 0511
+    startupProbe: &nodeStartupProbe
       httpGet:
         path: /status
         port: 5555
       failureThreshold: 120
-      periodSeconds: 2
-    terminationGracePeriodSeconds: 3600
-    lifecycle:
-      preStop:
-        exec:
-          command:
-            - bash
-            - -c
-            - |
-              curl -X POST 127.0.0.1:5555/se/grid/node/drain --header 'X-REGISTRATION-SECRET;' && \
-              while curl 127.0.0.1:5555/status; do sleep 1; done
+      periodSeconds: 1
+
   firefoxNode:
-    video:
-      enabled: true
-      imageName: selenium/video
-      extraEnvironmentVariables: *videoExtraEnvVariables
-      extraVolumeMounts: *videoExtraVolumeMounts
-      extraVolumes:
-        - name: video-data-pvclaim
-          persistentVolumeClaim:
-            claimName: selenium-firefox-video-data-pvclaim
-    startupProbe:
-      httpGet:
-        path: /status
-        port: 5555
-      failureThreshold: 120
-      periodSeconds: 2
-    terminationGracePeriodSeconds: 3600
-    lifecycle:
-      preStop:
-        exec:
-          command:
-            - bash
-            - -c
-            - |
-              curl -X POST 127.0.0.1:5555/se/grid/node/drain --header 'X-REGISTRATION-SECRET;' && \
-              while curl 127.0.0.1:5555/status; do sleep 1; done
+    maxReplicaCount: *maxReplicaCount
+    minReplicaCount: *minReplicaCount
+    resources: *resources
+    extraEnvironmentVariables: *extraEnvironmentVariables
+    ports: *nodePorts
+    sidecars: *nodeVideoRecord
+    extraVolumes: *nodeVolumes
+    startupProbe: *nodeStartupProbe
+
   edgeNode:
-    video:
-      enabled: true
-      imageName: selenium/video
-      extraEnvironmentVariables: *videoExtraEnvVariables
-      extraVolumeMounts: *videoExtraVolumeMounts
-      extraVolumes:
-        - name: video-data-pvclaim
-          persistentVolumeClaim:
-            claimName: selenium-edge-video-data-pvclaim
-    startupProbe:
-      httpGet:
-        path: /status
-        port: 5555
-      failureThreshold: 120
-      periodSeconds: 2
-    terminationGracePeriodSeconds: 3600
-    lifecycle:
-      preStop:
-        exec:
-          command:
-            - bash
-            - -c
-            - |
-              curl -X POST 127.0.0.1:5555/se/grid/node/drain --header 'X-REGISTRATION-SECRET;' && \
-              while curl 127.0.0.1:5555/status; do sleep 1; done
+    maxReplicaCount: *maxReplicaCount
+    minReplicaCount: *minReplicaCount
+    resources: *resources
+    extraEnvironmentVariables: *extraEnvironmentVariables
+    ports: *nodePorts
+    sidecars: *nodeVideoRecord
+    extraVolumes: *nodeVolumes
+    startupProbe: *nodeStartupProbe
 
 #jaeger-all-in-one:
   #enabled: true
+
+#keda:
+#  enabled: true
 
 ingress-nginx:
   #enabled: true
@@ -141,45 +183,3 @@ ingress-nginx:
   tcp:
     4444: "{{ .Release.Namespace }}/selenium-router:4444"
     16686: "{{ .Release.Namespace }}/{{ .Release.Name }}-jaeger-all-in-one-headless:16686"
-
-#keda:
-  #enabled: true
-
-grid-autoscaling:
-  #enabled: true
-  scale-chrome-node:
-    enabled: true
-    minReplicaCount: 0
-    maxReplicaCount: 20
-    scaleTargetRef:
-      name: selenium-chrome-node
-    triggers:
-      - type: selenium-grid
-        metadata:
-          browserName: 'chrome'
-        authenticationRef:
-          name: trigger-auth-grid-secret
-  scale-firefox-node:
-    enabled: true
-    minReplicaCount: 0
-    maxReplicaCount: 20
-    scaleTargetRef:
-      name: selenium-firefox-node
-    triggers:
-      - type: selenium-grid
-        metadata:
-          browserName: 'firefox'
-        authenticationRef:
-          name: trigger-auth-grid-secret
-  scale-edge-node:
-    enabled: true
-    minReplicaCount: 0
-    maxReplicaCount: 20
-    scaleTargetRef:
-      name: selenium-edge-node
-    triggers:
-      - type: selenium-grid
-        metadata:
-          browserName: 'MicrosoftEdge'
-        authenticationRef:
-          name: trigger-auth-grid-secret

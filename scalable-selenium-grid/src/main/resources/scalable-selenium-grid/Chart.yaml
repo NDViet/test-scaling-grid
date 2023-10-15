@@ -12,29 +12,31 @@ dependencies:
     tags:
       - full
       - selenium-grid
-  - condition: global.seleniumGrid.autoscaling.enabled, global.seleniumGrid.autoscaling.useKEDA, keda.enabled
+
+  - condition: global.seleniumGrid.autoscaling.enableWithExistingKEDA, global.keda.enabled, keda.enabled
     name: ${chart.keda.name}
     repository: ${chart.keda.repository}
     version: ${chart.keda.version}
     tags:
       - full
       - keda
-      - grid-autoscaling
-  - condition: global.seleniumGrid.autoscaling.enabled, grid-autoscaling.enabled
+
+  - condition: global.seleniumGrid.autoscaling.enableWithExistingKEDA, global.grid-autoscaling.enabled, grid-autoscaling.enabled
     name: grid-autoscaling
     repository: file://../../../../grid-autoscaling/target/classes/grid-autoscaling
     version: ${chart.this.version}
     tags:
       - full
       - keda
-      - grid-autoscaling
-  - condition: global.seleniumGrid.persistence.enabled, grid-pvc.enabled
+
+  - condition: global.seleniumGrid.persistence.enabled, global.grid-pvc.enabled, grid-pvc.enabled
     name: grid-pvc
     repository: file://../../../../grid-pvc/target/classes/grid-pvc
     version: ${chart.this.version}
     tags:
       - full
       - grid-pvc
+
   - condition: global.jaeger-all-in-one.enabled, jaeger-all-in-one.enabled
     name: ${chart.jaeger.name}
     repository: ${chart.jaeger.repository}
@@ -42,6 +44,7 @@ dependencies:
     tags:
       - full
       - jaeger-all-in-one
+
   - condition: global.ingress-nginx.enabled, ingress-nginx.enabled
     name: ${chart.ingress.name}
     repository: ${chart.ingress.repository}
