@@ -8,7 +8,7 @@ tags:
 global:
   seleniumGrid:
     persistence:
-      enabled: true
+      enabled: &persistence true
     autoscaling:
       enableWithExistingKEDA: &enableWithExistingKEDA true
     videoImage: &videoImage "ndviet/video:ffmpeg-4.4.3-20231012"
@@ -20,6 +20,16 @@ global:
     #enabled: true
   keda:
     #enabled: true
+
+grid-pvc:
+  selenium-node: #claimName to be used by selenium-grid.node.extraVolumes
+    persistence:
+      enabled: *persistence
+      size: 15Gi
+      pv:
+        enabled: *persistence
+        hostPath:
+          path: /testops/local/selenium
 
 selenium-grid:
   #enabled: true
@@ -55,8 +65,8 @@ selenium-grid:
 #        value: "300"
 #      - name: SE_NODE_OVERRIDE_MAX_SESSIONS
 #        value: "true"
-#      - name: SE_NODE_MAX_SESSIONS
-#        value: "1"
+      - name: SE_NODE_MAX_SESSIONS
+        value: "1"
       - name: DRAIN_AFTER_SESSION_COUNT #must add this to drain video together with session
         value: "1"
       - name: SE_ENABLE_TRACING
@@ -123,7 +133,7 @@ selenium-grid:
     extraVolumes: &nodeVolumes
       - name: videos
         persistentVolumeClaim:
-          claimName: "selenium-node-pvc"
+          claimName: "selenium-node"
       - name: configurations
         configMap:
           name: "selenium-configurations"

@@ -54,7 +54,7 @@ then
 	recording_started="false"
 	video_file_name=""
 
-	trap terminate_gracefully SIGTERM SIGINT SIGKILL
+	trap terminate_gracefully SIGTERM SIGINT
 
 	echo 'Checking if the display is open...'
 	until [ $return_code -eq 0 -o $attempts -eq $max_attempts ]; do

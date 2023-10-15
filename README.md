@@ -34,6 +34,7 @@ Built chart is located under target/helm/repo/scalable-selenium-grid-x.x.x.tgz
     * GET ```/status```: return status ```true/false``` of pid "video.sh" is running. Can be used in startupProbe, livenessProbe to check whether container is healthy.
     * GET ```/recording```: return status ```true/false``` of pid "ffmpeg" is running.
     * POST ```/drain```: terminating with grace. Can call this API in container ```lifecycle.preStop.exec.command``` Or in part of ```selenium-grid.autoscaling.deregisterLifecycle.preStop.exec.command``` to gracefully shut down the container together with browser node.
+- Those above features need to use with image [ndviet/video:ffmpeg-4.4.3-20231012](https://hub.docker.com/r/ndviet/video)
 
 ### :heavy_check_mark: 23.9.0
 **Added**
