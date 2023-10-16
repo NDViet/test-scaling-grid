@@ -43,11 +43,11 @@ selenium-grid:
       helm.sh/hook: post-install,post-upgrade,post-rollback
     scaledJobOptions:
       minReplicaCount: &minReplicaCount 0
-      successfulJobsHistoryLimit: 5
+      successfulJobsHistoryLimit: 0 # clean up pods with status Completed
       failedJobsHistoryLimit: 5
       pollingInterval: 20
       scalingStrategy:
-        strategy: accurate
+        strategy: default
     deregisterLifecycle:
       preStop:
         exec:
@@ -72,7 +72,7 @@ selenium-grid:
       - name: SE_ENABLE_TRACING
         value: "true"
       - name: JAVA_OPTS
-        value: "-Dotel.traces.exporter=jaeger -Dotel.exporter.jaeger.endpoint=http://{{ .Release.Name }}-jaeger-all-in-one-headless:14250 -Dotel.resource.attributes=service.name=selenium"
+        value: "-Dotel.traces.exporter=jaeger -Dotel.exporter.jaeger.endpoint=http://{{ .Release.Name }}-jaeger-all-in-one-headless:14250 -Dotel.resource.attributes=service.name=selenium -Dotel.java.global-autoconfigure.enabled=true"
       - name: SE_VIDEO_RECORD #must add this to enable video recording
         value: "true"
       - name: POD_NAME
@@ -168,8 +168,12 @@ selenium-grid:
 #jaeger-all-in-one:
   #enabled: true
 
-#keda:
-#  enabled: true
+keda:
+  #enabled: true
+  webhooks:
+    enabled: false
+  http:
+    timeout: 15000
 
 ingress-nginx:
   #enabled: true
