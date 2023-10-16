@@ -17,34 +17,6 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>templating-maven-plugin</artifactId>
             </plugin>
-            <plugin>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>helm-repo-add</id>
-                        <phase>initialize</phase>
-                        <configuration>
-                            <target>
-                                <exec executable="${exec.executable}">
-                                    <arg value="${exec.overrides}"/>
-                                    <arg value="helm repo add jaeger ${chart.jaeger.repository}"/>
-                                </exec>
-                                <exec executable="${exec.executable}">
-                                    <arg value="${exec.overrides}"/>
-                                    <arg value="helm repo add ingress ${chart.ingress.repository}"/>
-                                </exec>
-                                <exec executable="${exec.executable}">
-                                    <arg value="${exec.overrides}"/>
-                                    <arg value="helm repo add keda ${chart.keda.repository}"/>
-                                </exec>
-                            </target>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
 
             <plugin>
                 <groupId>io.kokuwa.maven</groupId>
@@ -55,6 +27,7 @@
                         <id>helm-package</id>
                         <phase>package</phase>
                         <goals>
+                            <goal>init</goal>
                             <goal>dependency-build</goal>
                             <goal>lint</goal>
                             <goal>package</goal>
@@ -62,10 +35,23 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <chartVersion>${project.version}</chartVersion>
-                    <outputDirectory>${project.parent.build.directory}/helm/repo</outputDirectory>
-                    <lintStrict>true</lintStrict>
-                    <useLocalHelmBinary>true</useLocalHelmBinary>
+                    <helmExtraRepos>
+                        <helmExtraRepo>
+                            <name>${chart.jaeger.name}</name>
+                            <url>${chart.jaeger.repository}</url>
+                            <forceUpdate>true</forceUpdate>
+                        </helmExtraRepo>
+                        <helmExtraRepo>
+                            <name>${chart.ingress.name}</name>
+                            <url>${chart.ingress.repository}</url>
+                            <forceUpdate>true</forceUpdate>
+                        </helmExtraRepo>
+                        <helmExtraRepo>
+                            <name>${chart.keda.name}</name>
+                            <url>${chart.keda.repository}</url>
+                            <forceUpdate>true</forceUpdate>
+                        </helmExtraRepo>
+                    </helmExtraRepos>
                 </configuration>
             </plugin>
         </plugins>

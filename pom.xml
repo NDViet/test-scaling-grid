@@ -103,13 +103,16 @@
                 <plugin>
                     <groupId>io.kokuwa.maven</groupId>
                     <artifactId>helm-maven-plugin</artifactId>
-                    <version>6.6.1</version>
+                    <version>6.11.0</version>
                     <extensions>true</extensions>
                     <configuration>
                         <chartDirectory>${project.build.directory}/classes</chartDirectory>
                         <chartVersion>${project.version}</chartVersion>
+                        <outputDirectory>${project.parent.build.directory}/helm/repo</outputDirectory>
                         <useLocalHelmBinary>true</useLocalHelmBinary>
                         <autoDetectLocalHelmBinary>true</autoDetectLocalHelmBinary>
+                        <lintStrict>true</lintStrict>
+                        <addDefaultRepo>false</addDefaultRepo>
                     </configuration>
                 </plugin>
             </plugins>

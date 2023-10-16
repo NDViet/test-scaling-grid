@@ -26,17 +26,12 @@
                         <id>helm-package</id>
                         <phase>package</phase>
                         <goals>
-                            <goal>dependency-build</goal>
                             <goal>lint</goal>
                             <goal>package</goal>
                         </goals>
                     </execution>
                 </executions>
                 <configuration>
-                    <chartVersion>${project.version}</chartVersion>
-                    <outputDirectory>${project.parent.build.directory}/helm/repo</outputDirectory>
-                    <lintStrict>true</lintStrict>
-                    <useLocalHelmBinary>true</useLocalHelmBinary>
                 </configuration>
             </plugin>
         </plugins>

@@ -27,21 +27,6 @@
                 <artifactId>maven-antrun-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>helm-repo-add</id>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <configuration>
-                            <target>
-                                <exec executable="${exec.executable}">
-                                    <arg value="${exec.overrides}"/>
-                                    <arg value="helm repo add selenium ${chart.selenium.repository}"/>
-                                </exec>
-                            </target>
-                        </configuration>
-                    </execution>
-                    <execution>
                         <id>extract-origin-chart</id>
                         <phase>generate-resources</phase>
                         <goals>
@@ -87,13 +72,17 @@
                         <id>download-origin-chart</id>
                         <phase>initialize</phase>
                         <goals>
+                            <goal>init</goal>
                             <goal>dependency-build</goal>
                         </goals>
                         <configuration>
-                            <chartVersion>${project.version}</chartVersion>
-                            <outputDirectory>${project.parent.build.directory}/helm/repo</outputDirectory>
-                            <useLocalHelmBinary>true</useLocalHelmBinary>
-                            <autoDetectLocalHelmBinary>true</autoDetectLocalHelmBinary>
+                            <helmExtraRepos>
+                                <helmExtraRepo>
+                                    <name>${chart.selenium.name}</name>
+                                    <url>${chart.selenium.repository}</url>
+                                    <forceUpdate>true</forceUpdate>
+                                </helmExtraRepo>
+                            </helmExtraRepos>
                         </configuration>
                     </execution>
                     <execution>
@@ -105,8 +94,6 @@
                         </goals>
                         <configuration>
                             <chartVersion>${chart.selenium.version}</chartVersion>
-                            <outputDirectory>${project.parent.build.directory}/helm/repo</outputDirectory>
-                            <useLocalHelmBinary>true</useLocalHelmBinary>
                         </configuration>
                     </execution>
                 </executions>
