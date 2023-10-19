@@ -11,7 +11,7 @@ global:
       enabled: &persistence true
     autoscaling:
       enableWithExistingKEDA: &enableWithExistingKEDA true
-    videoImage: &videoImage "ndviet/video:ffmpeg-4.4.3-20231012"
+    videoImage: &videoImage "${chart.images.video.tag}"
   selenium-grid:
     #enabled: true
   jaeger-all-in-one:
@@ -114,7 +114,7 @@ selenium-grid:
         volumeMounts:
           - name: videos
             mountPath: /videos
-#            subPathExpr: $(POD_NAME)
+            subPath: videos
           - name: configurations
             mountPath: /opt/bin/video.sh
             subPath: video.sh
