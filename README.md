@@ -38,6 +38,13 @@ Built chart is located under target/helm/repo/scalable-selenium-grid-x.x.x.tgz
 
 ## Change Log
 
+### :heavy_check_mark: 23.10.19
+**Updated**
+- Chart dependencies:
+  - jaeger-all-in-one ```(0.1.8 -> 0.1.11)```
+  - ingress-nginx ```(4.0.6 -> 4.8.2)```
+- Video image: `ndviet/video:ffmpeg-6.0-alpine-20231019`. A huge reduction in image size by changing based image from `ubuntu:20.04` to `alpine:3.13`
+
 ### :heavy_check_mark: 23.10.12
 **Removed**
 - Templates to create scaledObject in module [grid-autoscaling](charts/grid-autoscaling/templates) (Fortunately, [Selenium-Grid Helm Chart](charts/selenium-grid/README.md) added autoscaling in default values.yaml from version [0.19.0](https://github.com/SeleniumHQ/docker-selenium/blob/trunk/charts/selenium-grid/CHANGELOG.md#heavy_check_mark-0190))
