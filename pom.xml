@@ -18,7 +18,7 @@
     </modules>
 
     <properties>
-        <revision>23.10.19</revision>
+        <revision>23.10.24</revision>
         <exec.executable>bash</exec.executable>
         <exec.overrides>-c</exec.overrides>
         <chart.this.version>${project.version}</chart.this.version>
