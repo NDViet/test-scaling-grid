@@ -51,6 +51,11 @@
                             <url>${chart.keda.repository}</url>
                             <forceUpdate>true</forceUpdate>
                         </helmExtraRepo>
+                        <helmExtraRepo>
+                            <name>${chart.webdav.name}</name>
+                            <url>${chart.webdav.repository}</url>
+                            <forceUpdate>true</forceUpdate>
+                        </helmExtraRepo>
                     </helmExtraRepos>
                 </configuration>
             </plugin>

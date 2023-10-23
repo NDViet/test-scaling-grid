@@ -4,6 +4,7 @@ tags:
   jaeger-all-in-one: false
   ingress-nginx: false
   keda: false
+  webdav: false
 
 global:
   seleniumGrid:
@@ -43,7 +44,7 @@ selenium-grid:
       helm.sh/hook: post-install,post-upgrade,post-rollback
     scaledJobOptions:
       minReplicaCount: &minReplicaCount 0
-      successfulJobsHistoryLimit: 0 # clean up pods with status Completed
+      successfulJobsHistoryLimit: 5 # clean up pods with status Completed
       failedJobsHistoryLimit: 5
       pollingInterval: 20
       scalingStrategy:
@@ -75,6 +76,10 @@ selenium-grid:
         value: "-Dotel.traces.exporter=jaeger -Dotel.exporter.jaeger.endpoint=http://{{ .Release.Name }}-jaeger-all-in-one-headless:14250 -Dotel.resource.attributes=service.name=selenium -Dotel.java.global-autoconfigure.enabled=true"
       - name: SE_VIDEO_RECORD #must add this to enable video recording
         value: "true"
+      - name: SE_VIDEO_FOLDER
+        value: &SE_VIDEO_FOLDER "/videos"
+      - name: SE_SESSION_FOLDER
+        value: &SE_SESSION_FOLDER "/sessions"
       - name: POD_NAME
         valueFrom:
           fieldRef:
@@ -85,6 +90,8 @@ selenium-grid:
             fieldPath: status.podIP
       - name: DISPLAY_CONTAINER_NAME
         value: $(POD_IP)
+      - name: SE_DOWNLOAD_MOUNT_PATH
+        value: data/$(POD_NAME)
 #      - name: FILE_NAME
 #        value: $(POD_IP)_$(POD_NAME).mp4
 
@@ -112,28 +119,35 @@ selenium-grid:
           - containerPort: &videoContainerPort 9000
         env: *extraEnvironmentVariables
         volumeMounts:
-          - name: videos
-            mountPath: /videos
+          - name: node-data
+            mountPath: *SE_SESSION_FOLDER
+            subPath: data
+          - name: node-data
+            mountPath: *SE_VIDEO_FOLDER
             subPath: videos
-          - name: configurations
-            mountPath: /opt/bin/video.sh
-            subPath: video.sh
-          - name: configurations
-            mountPath: /opt/bin/video_ready.py
-            subPath: video_ready.py
-          - name: configurations
-            mountPath: /etc/supervisord.conf
-            subPath: supervisord.conf
+#          - name: configurations
+#            mountPath: /opt/bin/video.sh
+#            subPath: video.sh
+#          - name: configurations
+#            mountPath: /opt/bin/video_ready.py
+#            subPath: video_ready.py
+#          - name: configurations
+#            mountPath: /etc/supervisord.conf
+#            subPath: supervisord.conf
         startupProbe:
           httpGet:
             path: /status
             port: *videoContainerPort
           failureThreshold: 120
           periodSeconds: 1
+    extraVolumeMounts:
+      - name: node-data
+        mountPath: /home/seluser/Downloads
+        subPathExpr: $(SE_DOWNLOAD_MOUNT_PATH)
     extraVolumes: &nodeVolumes
-      - name: videos
+      - name: node-data
         persistentVolumeClaim:
-          claimName: "selenium-node"
+          claimName: &seleniumClaim "selenium-node"
       - name: configurations
         configMap:
           name: "selenium-configurations"
@@ -175,6 +189,12 @@ keda:
   http:
     timeout: 15000
 
+webdav:
+  #enabled: true
+  persistence:
+    enabled: *persistence
+    existingClaim: *seleniumClaim
+
 ingress-nginx:
   #enabled: true
   controller:
@@ -187,3 +207,4 @@ ingress-nginx:
   tcp:
     4444: "{{ .Release.Namespace }}/selenium-router:4444"
     16686: "{{ .Release.Namespace }}/{{ .Release.Name }}-jaeger-all-in-one-headless:16686"
+    8080: "{{ .Release.Namespace }}/{{ .Release.Name }}-webdav:8080"
