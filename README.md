@@ -10,6 +10,8 @@ More details on my motivation are mentioned in the presentation [here](docs/Topi
 2. Helm v3 (Tested version v3.11.3)
 3. Kubernetes (Tested version v1.25.5 - Runtime: Docker v20.10.24 - Provisioned by Minikube v1.26.1)
 
+Noted: At the moment, chart supports PersistenceVolume on local HostPath only. Other types of PV will be added later.
+
 ## Install the chart
 
 ```shell
@@ -37,6 +39,20 @@ mvn clean install
 Built chart is located under target/helm/repo/scalable-selenium-grid-x.x.x.tgz
 
 ## Change Log
+
+### :heavy_check_mark: 23.10.24
+**Removed**
+- Scripts, configs in video-recording are initialized when build Docker image. Refer to [source repo](../../../docker-selenium/Video).
+
+**Updated**
+- Node directory `/home/seluser/Downloads` is mounted to `<pv_path>/data/$POD_NAME`.
+- For traceability, a session is run in which node `$POD_NAME` is logged in file `<pv_path>/data/$SESSION_ID.txt`.
+- New image for video-recording `ndviet/video:ffmpeg-6.0-alpine-20231024`.
+
+**Added**
+- [WebDAV](../../../test-webdav-docker) service is deployed to access and browse data and videos of distributed nodes remotely.
+  - By default, WebDAV is exposed via ingress TCP host port `8080`. Change another port via `ingress-nginx.tcp` in scalable-selenium-grid/values.yaml.
+  - Videos and node data can be browsed via WebDAV client.
 
 ### :heavy_check_mark: 23.10.19
 **Updated**
