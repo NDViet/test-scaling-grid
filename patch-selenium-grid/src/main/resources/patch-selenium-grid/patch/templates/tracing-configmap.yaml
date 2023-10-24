@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: selenium-tracing-config
+  namespace: {{ .Release.Namespace }}
+{{- with .Values.nodeConfigMap.annotations }}
+  annotations: {{- toYaml . | nindent 4 }}
+{{- end }}
+  labels:
+    {{- include "seleniumGrid.commonLabels" . | nindent 4 }}
+    {{- with .Values.customLabels }}
+      {{- toYaml . | nindent 4 }}
+    {{- end }}
+data:
+  SE_ENABLE_TRACING: {{ (.Values.global.seleniumGrid.tracing).enabled | default "false" | quote }}
+  {{- $jaegerEndpoint := (.Values.global.seleniumGrid.tracing).jaegerEndpoint | default (printf "http://%s-jaeger-all-in-one-headless:14250" .Release.Name) }}
+  {{- $jaegerEndpoint := tpl $jaegerEndpoint . }}
+  {{- $JAVA_OPTS := printf "-Dotel.traces.exporter=jaeger -Dotel.exporter.jaeger.endpoint=%s -Dotel.resource.attributes=service.name=selenium -Dotel.java.global-autoconfigure.enabled=true" $jaegerEndpoint }}
+  JAVA_OPTS: {{ $JAVA_OPTS | quote }}

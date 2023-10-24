@@ -52,3 +52,11 @@ dependencies:
     tags:
       - full
       - ingress-nginx
+
+  - condition: global.webdav.enabled, webdav.enabled
+    name: ${chart.webdav.name}
+    repository: ${chart.webdav.repository}
+    version: ${chart.webdav.version}
+    tags:
+      - full
+      - webdav

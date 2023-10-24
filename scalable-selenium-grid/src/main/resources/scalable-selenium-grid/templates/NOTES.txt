@@ -1,0 +1,12 @@
+TestOps Autoscaling Selenium Grid ecosystem deployed successfully.
+
+{{- $pvEnabled := index .Values "grid-pvc" "selenium-node" "persistence" "pv" "enabled" }}
+{{- if and .Values.global.seleniumGrid.persistence.enabled $pvEnabled }}
+Noted: Please ensure local hostPath directory is created and set permissions correctly. If not created yet, kindly execute below commands once!
+{{- $hostPathDir := index .Values "grid-pvc" "selenium-node" "persistence" "pv" "hostPath" "path" }}
+---
+sudo mkdir -p {{ $hostPathDir }}
+sudo chown 999 {{ $hostPathDir }}
+sudo chmod 755 {{ $hostPathDir }}
+---
+{{- end }}
