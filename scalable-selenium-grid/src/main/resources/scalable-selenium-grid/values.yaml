@@ -12,6 +12,9 @@ global:
       enabled: &persistence true
     autoscaling:
       enableWithExistingKEDA: &enableWithExistingKEDA true
+    tracing:
+      enabled: true
+      jaegerEndpoint: http://{{ .Release.Name }}-jaeger-all-in-one-headless:14250
     videoImage: &videoImage "${chart.images.video.tag}"
   selenium-grid:
     #enabled: true
@@ -60,26 +63,39 @@ selenium-grid:
               curl -X POST 127.0.0.1:9000/drain --header 'X-REGISTRATION-SECRET;' && \
               while curl 127.0.0.1:5555/status; do sleep 1; done;
   components:
-    extraEnvironmentVariables: &extraEnvironmentVariables
-      # Strategy: Node serve only 1 session and to be terminated
+    extraEnvironmentVariables:
+    extraEnvFrom: &extraEnvFrom
+      - configMapRef:
+          name: selenium-tracing-config
+
+  chromeNode:
+    maxReplicaCount: &maxReplicaCount 8
+    minReplicaCount: *minReplicaCount
+    resources: &resources
+      requests:
+        memory: "1Gi"
+        cpu: "1"
+      limits:
+        memory: "1Gi"
+        cpu: "1"
+    extraEnvFrom: *extraEnvFrom
+    extraEnvironmentVariables: &extraEnvironmentVariablesNodes
 #      - name: SE_NODE_SESSION_TIMEOUT
 #        value: "300"
 #      - name: SE_NODE_OVERRIDE_MAX_SESSIONS
 #        value: "true"
-      - name: SE_NODE_MAX_SESSIONS
-        value: "1"
       - name: DRAIN_AFTER_SESSION_COUNT #must add this to drain video together with session
         value: "1"
-      - name: SE_ENABLE_TRACING
-        value: "true"
-      - name: JAVA_OPTS
-        value: "-Dotel.traces.exporter=jaeger -Dotel.exporter.jaeger.endpoint=http://{{ .Release.Name }}-jaeger-all-in-one-headless:14250 -Dotel.resource.attributes=service.name=selenium -Dotel.java.global-autoconfigure.enabled=true"
+      - name: SE_NODE_MAX_SESSIONS #ensure the mapping is 1 session - 1 recording
+        value: "1"
       - name: SE_VIDEO_RECORD #must add this to enable video recording
         value: "true"
       - name: SE_VIDEO_FOLDER
         value: &SE_VIDEO_FOLDER "/videos"
       - name: SE_SESSION_FOLDER
         value: &SE_SESSION_FOLDER "/sessions"
+      - name: SE_OPTS
+        value: "--enable-managed-downloads true"
       - name: POD_NAME
         valueFrom:
           fieldRef:
@@ -92,20 +108,6 @@ selenium-grid:
         value: $(POD_IP)
       - name: SE_DOWNLOAD_MOUNT_PATH
         value: data/$(POD_NAME)
-#      - name: FILE_NAME
-#        value: $(POD_IP)_$(POD_NAME).mp4
-
-  chromeNode:
-    maxReplicaCount: &maxReplicaCount 8
-    minReplicaCount: *minReplicaCount
-    resources: &resources
-      requests:
-        memory: "1Gi"
-        cpu: "1"
-      limits:
-        memory: "1Gi"
-        cpu: "1"
-    extraEnvironmentVariables: *extraEnvironmentVariables
     ports: &nodePorts
       - 99
       - 5555
@@ -117,7 +119,7 @@ selenium-grid:
         imagePullPolicy: IfNotPresent
         ports:
           - containerPort: &videoContainerPort 9000
-        env: *extraEnvironmentVariables
+        env: *extraEnvironmentVariablesNodes
         volumeMounts:
           - name: node-data
             mountPath: *SE_SESSION_FOLDER
@@ -125,15 +127,6 @@ selenium-grid:
           - name: node-data
             mountPath: *SE_VIDEO_FOLDER
             subPath: videos
-#          - name: configurations
-#            mountPath: /opt/bin/video.sh
-#            subPath: video.sh
-#          - name: configurations
-#            mountPath: /opt/bin/video_ready.py
-#            subPath: video_ready.py
-#          - name: configurations
-#            mountPath: /etc/supervisord.conf
-#            subPath: supervisord.conf
         startupProbe:
           httpGet:
             path: /status
@@ -163,7 +156,8 @@ selenium-grid:
     maxReplicaCount: *maxReplicaCount
     minReplicaCount: *minReplicaCount
     resources: *resources
-    extraEnvironmentVariables: *extraEnvironmentVariables
+    extraEnvFrom: *extraEnvFrom
+    extraEnvironmentVariables: *extraEnvironmentVariablesNodes
     ports: *nodePorts
     sidecars: *nodeVideoRecord
     extraVolumes: *nodeVolumes
@@ -173,7 +167,8 @@ selenium-grid:
     maxReplicaCount: *maxReplicaCount
     minReplicaCount: *minReplicaCount
     resources: *resources
-    extraEnvironmentVariables: *extraEnvironmentVariables
+    extraEnvFrom: *extraEnvFrom
+    extraEnvironmentVariables: *extraEnvironmentVariablesNodes
     ports: *nodePorts
     sidecars: *nodeVideoRecord
     extraVolumes: *nodeVolumes
