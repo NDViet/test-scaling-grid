@@ -1,9 +1,10 @@
 apiVersion: v2
 name: scalable-selenium-grid
-description: A Helm chart for Kubernetes
+description: A Helm umbrella chart for creating ecosystem of Autoscaling Selenium Grid in Kubernetes
 type: application
 version: ${chart.this.version}
 appVersion: "${chart.this.version}"
+icon: "${chart.this.icon}"
 dependencies:
   - condition: global.selenium-grid.enabled, selenium-grid.enabled
     name: ${chart.selenium.name}

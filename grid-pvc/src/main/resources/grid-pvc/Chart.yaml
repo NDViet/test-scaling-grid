@@ -1,9 +1,10 @@
 apiVersion: v2
 name: grid-pvc
-description: A Helm chart for Kubernetes
+description: A Helm chart for creating PV and PVC for Selenium Grid in Kubernetes
 type: application
 version: ${chart.this.version}
 appVersion: "${chart.this.version}"
+icon: "${chart.this.icon}"
 dependencies:
   - alias: selenium-node
     condition: global.seleniumGrid.persistence.enabled,selenium-chrome-node.persistence.enabled

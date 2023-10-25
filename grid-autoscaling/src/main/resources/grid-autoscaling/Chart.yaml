@@ -1,6 +1,7 @@
 apiVersion: v2
 name: grid-autoscaling
-description: A Helm chart for Kubernetes
+description: A Helm chart for creating objects support Autoscaling Selenium Grid in Kubernetes
 type: application
 version: ${chart.this.version}
 appVersion: "${chart.this.version}"
+icon: "${chart.this.icon}"

@@ -1,6 +1,7 @@
 apiVersion: v2
 name: component-pvc
-description: A Helm individual chart to create PV and PVC for a component in Grid
+description: A Helm chart for creating generic PV and PVC in Kubernetes
 type: application
 version: ${chart.this.version}
 appVersion: "${chart.this.version}"
+icon: "${chart.this.icon}"

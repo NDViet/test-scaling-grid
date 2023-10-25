@@ -22,6 +22,7 @@
         <exec.executable>bash</exec.executable>
         <exec.overrides>-c</exec.overrides>
         <chart.this.version>${project.version}</chart.this.version>
+        <chart.this.icon>https://github.com/ndviet/ndviet.github.io/raw/master/img/logo.ico</chart.this.icon>
         <chart.selenium.name>selenium-grid</chart.selenium.name>
         <chart.selenium.repository>https://www.selenium.dev/docker-selenium</chart.selenium.repository>
         <chart.selenium.version>0.22.0</chart.selenium.version>

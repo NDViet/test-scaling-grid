@@ -1,6 +1,7 @@
 apiVersion: v2
 name: component-scaler
-description: A Helm chart for Kubernetes
+description: A Helm chart for creating generic KEDA object in Kubernetes
 type: application
 version: ${chart.this.version}
 appVersion: "${chart.this.version}"
+icon: "${chart.this.icon}"
