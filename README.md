@@ -43,6 +43,7 @@ Built chart is located under target/helm/repo/scalable-selenium-grid-x.x.x.tgz
 ### :heavy_check_mark: 23.10.25
 **Updated**
 - Image for video-recording `ndviet/video:ffmpeg-6.0-20231025` to test the PR [SeleniumHQ/docker-selenium #1981](../../../../SeleniumHQ/docker-selenium/pull/1981)
+- Add back ConfigMap in chart to overwrite scripts, configs in the default video-recording container (Refer to [patch-selenium-grid](patch-selenium-grid/src/main/resources/patch-selenium-grid/patch/configurations/Video))
 
 ### :heavy_check_mark: 23.10.24
 **Removed**
@@ -76,7 +77,7 @@ Built chart is located under target/helm/repo/scalable-selenium-grid-x.x.x.tgz
   - keda ```(2.10.1 -> 2.12.0)```
 
 **Added**
-- Use ConfigMap to override scripts, configs in video-recording container (Refer to [patch-selenium-grid](patch-selenium-grid/src/main/resources/patch-selenium-grid/patch/configurations/Video))
+- Use ConfigMap to overwrite scripts, configs in the default video-recording container (Refer to [patch-selenium-grid](patch-selenium-grid/src/main/resources/patch-selenium-grid/patch/configurations/Video))
 - Video container refer to ENV ```DRAIN_AFTER_SESSION_COUNT``` to terminate the container together with browser node.
 - Video container support graceful shutdown, terminate the container after the ongoing recording are completed.
 - Video support API via port 9000 to get status
