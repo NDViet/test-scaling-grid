@@ -40,6 +40,10 @@ Built chart is located under target/helm/repo/scalable-selenium-grid-x.x.x.tgz
 
 ## Change Log
 
+### :heavy_check_mark: 23.10.25
+**Updated**
+- Image for video-recording `ndviet/video:ffmpeg-6.0-20231025` to test the PR [SeleniumHQ/docker-selenium #1981](../../../../SeleniumHQ/docker-selenium/pull/1981)
+
 ### :heavy_check_mark: 23.10.24
 **Removed**
 - Scripts, configs in video-recording are initialized when build Docker image. Refer to [source repo](../../../docker-selenium/tree/trunk/Video).

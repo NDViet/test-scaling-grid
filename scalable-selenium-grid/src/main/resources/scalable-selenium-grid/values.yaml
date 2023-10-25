@@ -90,6 +90,8 @@ selenium-grid:
         value: "1"
       - name: SE_VIDEO_RECORD #must add this to enable video recording
         value: "true"
+      - name: SE_NODE_PORT
+        value: "5555"
       - name: SE_VIDEO_FOLDER
         value: &SE_VIDEO_FOLDER "/videos"
       - name: SE_SESSION_FOLDER
@@ -127,6 +129,18 @@ selenium-grid:
           - name: node-data
             mountPath: *SE_VIDEO_FOLDER
             subPath: videos
+          - name: configurations
+            mountPath: /opt/bin/session_task.sh
+            subPath: session_task.sh
+          - name: configurations
+            mountPath: /etc/supervisord.conf
+            subPath: supervisord.conf
+          - name: configurations
+            mountPath: /opt/bin/video.sh
+            subPath: video.sh
+          - name: configurations
+            mountPath: /opt/bin/video_ready.py
+            subPath: video_ready.py
         startupProbe:
           httpGet:
             path: /status
