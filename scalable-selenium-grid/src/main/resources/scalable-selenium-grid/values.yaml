@@ -15,7 +15,6 @@ global:
     tracing:
       enabled: true
       jaegerEndpoint: http://{{ .Release.Name }}-jaeger-all-in-one-headless:14250
-    videoImage: &videoImage "${chart.images.video.tag}"
   selenium-grid:
     #enabled: true
   jaeger-all-in-one:
@@ -45,11 +44,13 @@ selenium-grid:
     scalingType: job
     annotations:
       helm.sh/hook: post-install,post-upgrade,post-rollback
+    scaledOptions:
+      minReplicaCount: 0
+      maxReplicaCount: 8
+      pollingInterval: 15
     scaledJobOptions:
-      minReplicaCount: &minReplicaCount 0
-      successfulJobsHistoryLimit: 5 # clean up pods with status Completed
+      successfulJobsHistoryLimit: 0 # clean up pods with status Completed
       failedJobsHistoryLimit: 5
-      pollingInterval: 20
       scalingStrategy:
         strategy: default
     deregisterLifecycle:
@@ -69,8 +70,6 @@ selenium-grid:
           name: selenium-tracing-config
 
   chromeNode:
-    maxReplicaCount: &maxReplicaCount 8
-    minReplicaCount: *minReplicaCount
     resources: &resources
       requests:
         memory: "1Gi"
@@ -115,50 +114,17 @@ selenium-grid:
       - 5555
       - 5900
       - 7900
-    sidecars: &nodeVideoRecord
-      - name: video
-        image: *videoImage
-        imagePullPolicy: IfNotPresent
-        ports:
-          - containerPort: &videoContainerPort 9000
-        env: *extraEnvironmentVariablesNodes
-        volumeMounts:
-          - name: node-data
-            mountPath: *SE_SESSION_FOLDER
-            subPath: data
-          - name: node-data
-            mountPath: *SE_VIDEO_FOLDER
-            subPath: videos
-          - name: configurations
-            mountPath: /opt/bin/session_task.sh
-            subPath: session_task.sh
-          - name: configurations
-            mountPath: /etc/supervisord.conf
-            subPath: supervisord.conf
-          - name: configurations
-            mountPath: /opt/bin/video.sh
-            subPath: video.sh
-          - name: configurations
-            mountPath: /opt/bin/video_ready.py
-            subPath: video_ready.py
-        startupProbe:
-          httpGet:
-            path: /status
-            port: *videoContainerPort
-          failureThreshold: 120
-          periodSeconds: 1
     extraVolumeMounts:
       - name: node-data
         mountPath: /home/seluser/Downloads
         subPathExpr: $(SE_DOWNLOAD_MOUNT_PATH)
+      - name: node-data
+        mountPath: *SE_SESSION_FOLDER
+        subPath: data
     extraVolumes: &nodeVolumes
       - name: node-data
         persistentVolumeClaim:
           claimName: &seleniumClaim "selenium-node"
-      - name: configurations
-        configMap:
-          name: "selenium-configurations"
-          defaultMode: 0511
     startupProbe: &nodeStartupProbe
       httpGet:
         path: /status
@@ -167,27 +133,53 @@ selenium-grid:
       periodSeconds: 1
 
   firefoxNode:
-    maxReplicaCount: *maxReplicaCount
-    minReplicaCount: *minReplicaCount
     resources: *resources
     extraEnvFrom: *extraEnvFrom
     extraEnvironmentVariables: *extraEnvironmentVariablesNodes
     ports: *nodePorts
-    sidecars: *nodeVideoRecord
     extraVolumes: *nodeVolumes
     startupProbe: *nodeStartupProbe
 
   edgeNode:
-    maxReplicaCount: *maxReplicaCount
-    minReplicaCount: *minReplicaCount
     resources: *resources
     extraEnvFrom: *extraEnvFrom
     extraEnvironmentVariables: *extraEnvironmentVariablesNodes
     ports: *nodePorts
-    sidecars: *nodeVideoRecord
     extraVolumes: *nodeVolumes
     startupProbe: *nodeStartupProbe
 
+  videoRecorder:
+    enabled: true
+    imageName: ndviet/video
+    imageTag: "ffmpeg-6.0-20231026"
+    uploadDestinationPrefix: false
+    uploader: false
+    extraEnvironmentVariables: *extraEnvironmentVariablesNodes
+    volume:
+      name:
+        videoFolder: "videos"
+        videoScripts: "configurations"
+    extraVolumeMounts:
+      - name: configurations
+        mountPath: /opt/bin/video.sh
+        subPath: video.sh
+      - name: node-data
+        mountPath: *SE_VIDEO_FOLDER
+        subPath: videos
+      - name: configurations
+        mountPath: /opt/bin/session_task.sh
+        subPath: session_task.sh
+      - name: configurations
+        mountPath: /etc/supervisord.conf
+        subPath: supervisord.conf
+      - name: configurations
+        mountPath: /opt/bin/video_ready.py
+        subPath: video_ready.py
+    extraVolumes:
+      - name: configurations
+        configMap:
+          name: "selenium-configurations"
+          defaultMode: 0511
 #jaeger-all-in-one:
   #enabled: true
 
