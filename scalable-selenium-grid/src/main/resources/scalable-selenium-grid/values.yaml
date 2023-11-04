@@ -36,6 +36,28 @@ grid-pvc:
 
 selenium-grid:
   #enabled: true
+  ingress:
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      nginx.ingress.kubernetes.io/use-regex: "true"
+      nginx.ingress.kubernetes.io/rewrite-target: /$2
+      nginx.ingress.kubernetes.io/app-root: &gridAppRoot "/selenium"
+    hostname: false
+    paths:
+      - path: /selenium(/|$)(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: '{{ template "seleniumGrid.router.fullname" $ }}'
+            port:
+              number: 4444
+      - path: /(/?)(session/.*/se/vnc)
+        pathType: Prefix
+        backend:
+          service:
+            name: '{{ template "seleniumGrid.router.fullname" $ }}'
+            port:
+              number: 4444
   basicAuth:
     enabled: false
   isolateComponents: true
@@ -63,7 +85,10 @@ selenium-grid:
               curl -X POST 127.0.0.1:5555/se/grid/node/drain --header 'X-REGISTRATION-SECRET;' && \
               curl -X POST 127.0.0.1:9000/drain --header 'X-REGISTRATION-SECRET;' && \
               while curl 127.0.0.1:5555/status; do sleep 1; done;
+  hub:
+    subPath: *gridAppRoot
   components:
+    subPath: *gridAppRoot
     extraEnvironmentVariables:
     extraEnvFrom: &extraEnvFrom
       - configMapRef:
@@ -89,6 +114,10 @@ selenium-grid:
         value: "1"
       - name: SE_VIDEO_RECORD #must add this to enable video recording
         value: "true"
+      - name: SE_VNC_NO_PASSWORD
+        value: "true"
+#      - name: SE_NODE_GRID_URL
+#        value: "http://selenium-router.default:4444/selenium/"
       - name: SE_NODE_PORT
         value: "5555"
       - name: SE_VIDEO_FOLDER
@@ -110,10 +139,6 @@ selenium-grid:
       - name: SE_DOWNLOAD_MOUNT_PATH
         value: data/$(POD_NAME)
     ports: &nodePorts
-      - 99
-      - 5555
-      - 5900
-      - 7900
     extraVolumeMounts:
       - name: node-data
         mountPath: /home/seluser/Downloads
