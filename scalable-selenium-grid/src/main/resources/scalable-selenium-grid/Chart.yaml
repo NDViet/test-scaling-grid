@@ -1,6 +1,6 @@
 apiVersion: v2
 name: scalable-selenium-grid
-description: A Helm umbrella chart for creating ecosystem of Autoscaling Selenium Grid in Kubernetes
+description: Umbrella chart for creating ecosystem of Autoscaling Selenium Grid in Kubernetes
 type: application
 version: ${chart.this.version}
 appVersion: "${chart.this.version}"
@@ -14,7 +14,7 @@ dependencies:
       - full
       - selenium-grid
 
-  - condition: global.seleniumGrid.autoscaling.enableWithExistingKEDA, global.keda.enabled, keda.enabled
+  - condition: global.keda.enabled, keda.enabled, global.seleniumGrid.autoscaling.enableWithExistingKEDA
     name: ${chart.keda.name}
     repository: ${chart.keda.repository}
     version: ${chart.keda.version}
@@ -22,7 +22,7 @@ dependencies:
       - full
       - keda
 
-  - condition: global.seleniumGrid.autoscaling.enableWithExistingKEDA, global.grid-autoscaling.enabled, grid-autoscaling.enabled
+  - condition: global.grid-autoscaling.enabled, grid-autoscaling.enabled, global.seleniumGrid.autoscaling.enableWithExistingKEDA
     name: grid-autoscaling
     repository: file://../../../../grid-autoscaling/target/classes/grid-autoscaling
     version: ${chart.this.version}
@@ -30,7 +30,7 @@ dependencies:
       - full
       - keda
 
-  - condition: global.seleniumGrid.persistence.enabled, global.grid-pvc.enabled, grid-pvc.enabled
+  - condition: global.grid-pvc.enabled, grid-pvc.enabled, global.seleniumGrid.persistence.enabled
     name: grid-pvc
     repository: file://../../../../grid-pvc/target/classes/grid-pvc
     version: ${chart.this.version}

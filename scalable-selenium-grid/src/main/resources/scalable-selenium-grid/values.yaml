@@ -42,7 +42,7 @@ selenium-grid:
       nginx.ingress.kubernetes.io/use-regex: "true"
       nginx.ingress.kubernetes.io/rewrite-target: /$2
       nginx.ingress.kubernetes.io/app-root: &gridAppRoot "/selenium"
-    hostname: false
+    hostname: ""
     paths:
       - path: /selenium(/|$)(.*)
         pathType: Prefix
@@ -87,6 +87,7 @@ selenium-grid:
               while curl 127.0.0.1:5555/status; do sleep 1; done;
   hub:
     subPath: *gridAppRoot
+    extraEnvironmentVariables:
   components:
     subPath: *gridAppRoot
     extraEnvironmentVariables:

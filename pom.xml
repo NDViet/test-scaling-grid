@@ -25,7 +25,7 @@
         <chart.this.icon>https://github.com/ndviet/ndviet.github.io/raw/master/img/logo.ico</chart.this.icon>
         <chart.selenium.name>selenium-grid</chart.selenium.name>
         <chart.selenium.repository>https://www.selenium.dev/docker-selenium</chart.selenium.repository>
-        <chart.selenium.version>0.23.0</chart.selenium.version>
+        <chart.selenium.version>0.24.0</chart.selenium.version>
         <chart.images.video.tag>selenium/video:ffmpeg-6.0-20231025</chart.images.video.tag>
         <chart.jaeger.name>jaeger-all-in-one</chart.jaeger.name>
         <chart.jaeger.repository>https://raw.githubusercontent.com/hansehe/jaeger-all-in-one/master/helm/charts</chart.jaeger.repository>
