@@ -16,19 +16,19 @@ Noted: At the moment, chart supports PersistenceVolume on local HostPath only. O
 
 ```shell
 # Add ndviet helm repository
-helm repo add ndviet https://www.ndviet.org/charts
+helm repo add chart-repo https://www.ndviet.org/test-scaling-grid
 
 # Update charts from ndviet repo
 helm repo update
 
 # List all versions present in the ndviet repo
-helm search repo ndviet/scalable-selenium-grid --versions
+helm search repo chart-repo/scalable-selenium-grid --versions
 
 # Install full components as default with latest version
-helm upgrade -i test-grid ndviet/scalable-selenium-grid
+helm upgrade -i release chart-repo/scalable-selenium-grid
 
 # Download the chart latest version to local
-helm fetch ndviet/scalable-selenium-grid --untar
+helm fetch chart-repo/scalable-selenium-grid --untar
 ```
 
 ## Build the umbrella chart
@@ -39,6 +39,18 @@ mvn clean install
 Built chart is located under target/helm/repo/scalable-selenium-grid-x.x.x.tgz
 
 ## Change Log
+### :heavy_check_mark: 23.11.11
+**Updated**
+- Chart dependencies:
+  - selenium-grid ```(0.23.0 -> 0.24.0)```
+  - ingress-nginx ```(4.8.2 -> 4.8.3)```
+
+***Added***
+- Default ingress path `/selenium` for Selenium Grid UI.
+- Update chart default values aligned with new changes in chart `selenium-grid` version [0.24.0](https://github.com/SeleniumHQ/docker-selenium/blob/trunk/charts/selenium-grid/CHANGELOG.md#heavy_check_mark-0240)
+
+**Removed**
+- Video recording container definition in `node.sidecars`. Since chart version [0.23.0](https://github.com/SeleniumHQ/docker-selenium/blob/trunk/charts/selenium-grid/CHANGELOG.md#heavy_check_mark-0230) supports video recoder built-in.
 
 ### :heavy_check_mark: 23.10.25
 **Updated**

@@ -18,21 +18,21 @@
     </modules>
 
     <properties>
-        <revision>23.10.26</revision>
+        <revision>23.11.11</revision>
         <exec.executable>bash</exec.executable>
         <exec.overrides>-c</exec.overrides>
         <chart.this.version>${project.version}</chart.this.version>
         <chart.this.icon>https://github.com/ndviet/ndviet.github.io/raw/master/img/logo.ico</chart.this.icon>
         <chart.selenium.name>selenium-grid</chart.selenium.name>
         <chart.selenium.repository>https://www.selenium.dev/docker-selenium</chart.selenium.repository>
-        <chart.selenium.version>0.23.0</chart.selenium.version>
+        <chart.selenium.version>0.24.0</chart.selenium.version>
         <chart.images.video.tag>selenium/video:ffmpeg-6.0-20231025</chart.images.video.tag>
         <chart.jaeger.name>jaeger-all-in-one</chart.jaeger.name>
         <chart.jaeger.repository>https://raw.githubusercontent.com/hansehe/jaeger-all-in-one/master/helm/charts</chart.jaeger.repository>
         <chart.jaeger.version>0.1.11</chart.jaeger.version>
         <chart.ingress.name>ingress-nginx</chart.ingress.name>
         <chart.ingress.repository>https://kubernetes.github.io/ingress-nginx</chart.ingress.repository>
-        <chart.ingress.version>4.8.2</chart.ingress.version>
+        <chart.ingress.version>4.8.3</chart.ingress.version>
         <chart.keda.name>keda</chart.keda.name>
         <chart.keda.repository>https://kedacore.github.io/charts</chart.keda.repository>
         <chart.keda.version>2.12.0</chart.keda.version>
