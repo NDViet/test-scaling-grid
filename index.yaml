@@ -2,6 +2,15 @@ apiVersion: v1
 entries:
   scalable-selenium-grid:
     - apiVersion: v2
+      appVersion: 23.11.11
+      description: Umbrella chart for creating ecosystem of Autoscaling Selenium Grid in Kubernetes
+      icon: https://github.com/ndviet/ndviet.github.io/raw/master/img/logo.ico
+      name: scalable-selenium-grid
+      type: application
+      urls:
+        - https://github.com/ndviet/test-scaling-grid/releases/download/23.11.11/scalable-selenium-grid-23.11.11.tgz
+      version: 23.11.11
+    - apiVersion: v2
       appVersion: 23.10.25
       description: Umbrella chart for creating ecosystem of Autoscaling Selenium Grid in Kubernetes
       icon: https://github.com/ndviet/ndviet.github.io/raw/master/img/logo.ico
@@ -46,3 +55,4 @@ entries:
       urls:
         - https://github.com/ndviet/test-scaling-grid/releases/download/23.9.26/scalable-selenium-grid-23.9.26.tgz
       version: 23.9.26
+generated: "2023-11-11T12:05:37.483708953Z"
