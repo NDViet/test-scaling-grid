@@ -140,6 +140,7 @@ selenium-grid:
       - name: SE_DOWNLOAD_MOUNT_PATH
         value: data/$(POD_NAME)
     ports: &nodePorts
+      - 5555
     extraVolumeMounts:
       - name: node-data
         mountPath: /home/seluser/Downloads
