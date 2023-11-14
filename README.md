@@ -39,6 +39,11 @@ mvn clean install
 Built chart is located under target/helm/repo/scalable-selenium-grid-x.x.x.tgz
 
 ## Change Log
+### :heavy_check_mark: 23.11.15
+**Updated**
+- Chart dependencies:
+  - selenium-grid ```(0.24.0 -> 0.25.1)```
+
 ### :heavy_check_mark: 23.11.11
 **Updated**
 - Chart dependencies:
