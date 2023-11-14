@@ -5,8 +5,6 @@ on:
   push:
     branches:
       - master
-    paths:
-      - pom.xml
 
 jobs:
   release:
@@ -36,6 +34,6 @@ jobs:
       - name: Run chart-releaser
         uses: helm/chart-releaser-action@v1.6.0
         with:
-          charts_dir: target/classes/scalable-selenium-grid
+          charts_dir: target/classes
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
