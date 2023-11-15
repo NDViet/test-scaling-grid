@@ -1,3 +1,60 @@
 apiVersion: v1
 entries:
   scalable-selenium-grid:
+  - apiVersion: v2
+    appVersion: 23.9.26
+    created: "2023-11-15T02:33:41.661482599Z"
+    dependencies:
+    - condition: global.selenium-grid.enabled, selenium-grid.enabled
+      name: selenium-grid
+      repository: file://../../../../patch-selenium-grid/target/classes/patch-selenium-grid/charts/selenium-grid
+      tags:
+      - full
+      - selenium-grid
+      version: 0.15.8
+    - condition: global.seleniumGrid.autoscaling.enabled, global.seleniumGrid.autoscaling.useKEDA,
+        keda.enabled
+      name: keda
+      repository: https://kedacore.github.io/charts
+      tags:
+      - full
+      - keda
+      - grid-autoscaling
+      version: 2.10.1
+    - condition: global.seleniumGrid.autoscaling.enabled, grid-autoscaling.enabled
+      name: grid-autoscaling
+      repository: file://../../../../grid-autoscaling/target/classes/grid-autoscaling
+      tags:
+      - full
+      - keda
+      - grid-autoscaling
+      version: 23.9.26
+    - condition: global.seleniumGrid.persistence.enabled, grid-pvc.enabled
+      name: grid-pvc
+      repository: file://../../../../grid-pvc/target/classes/grid-pvc
+      tags:
+      - full
+      - grid-pvc
+      version: 23.9.26
+    - condition: global.jaeger-all-in-one.enabled, jaeger-all-in-one.enabled
+      name: jaeger-all-in-one
+      repository: https://raw.githubusercontent.com/hansehe/jaeger-all-in-one/master/helm/charts
+      tags:
+      - full
+      - jaeger-all-in-one
+      version: 0.1.8
+    - condition: global.ingress-nginx.enabled, ingress-nginx.enabled
+      name: ingress-nginx
+      repository: https://kubernetes.github.io/ingress-nginx
+      tags:
+      - full
+      - ingress-nginx
+      version: 4.0.6
+    description: A Helm chart for Kubernetes
+    digest: df102698e7fcee0fc952bfdb182b3c86e877af9227de15300d4a2320f4f22389
+    name: scalable-selenium-grid
+    type: application
+    urls:
+    - https://github.com/ndviet/test-scaling-grid/releases/download/scalable-selenium-grid-23.9.26/scalable-selenium-grid-23.9.26.tgz
+    version: 23.9.26
+generated: "2023-11-15T02:33:41.661492718Z"
