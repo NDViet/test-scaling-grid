@@ -2,6 +2,62 @@ apiVersion: v1
 entries:
   scalable-selenium-grid:
   - apiVersion: v2
+    appVersion: 23.10.19
+    created: "2023-11-15T02:46:44.508229969Z"
+    dependencies:
+    - condition: global.selenium-grid.enabled, selenium-grid.enabled
+      name: selenium-grid
+      repository: file://../../../../patch-selenium-grid/target/classes/patch-selenium-grid/charts/selenium-grid
+      tags:
+      - full
+      - selenium-grid
+      version: 0.22.0
+    - condition: global.seleniumGrid.autoscaling.enableWithExistingKEDA, global.keda.enabled,
+        keda.enabled
+      name: keda
+      repository: https://kedacore.github.io/charts
+      tags:
+      - full
+      - keda
+      version: 2.12.0
+    - condition: global.seleniumGrid.autoscaling.enableWithExistingKEDA, global.grid-autoscaling.enabled,
+        grid-autoscaling.enabled
+      name: grid-autoscaling
+      repository: file://../../../../grid-autoscaling/target/classes/grid-autoscaling
+      tags:
+      - full
+      - keda
+      version: 23.10.19
+    - condition: global.seleniumGrid.persistence.enabled, global.grid-pvc.enabled,
+        grid-pvc.enabled
+      name: grid-pvc
+      repository: file://../../../../grid-pvc/target/classes/grid-pvc
+      tags:
+      - full
+      - grid-pvc
+      version: 23.10.19
+    - condition: global.jaeger-all-in-one.enabled, jaeger-all-in-one.enabled
+      name: jaeger-all-in-one
+      repository: https://raw.githubusercontent.com/hansehe/jaeger-all-in-one/master/helm/charts
+      tags:
+      - full
+      - jaeger-all-in-one
+      version: 0.1.11
+    - condition: global.ingress-nginx.enabled, ingress-nginx.enabled
+      name: ingress-nginx
+      repository: https://kubernetes.github.io/ingress-nginx
+      tags:
+      - full
+      - ingress-nginx
+      version: 4.8.2
+    description: A Helm chart for Kubernetes
+    digest: 87bacc8a4d044f1f4b8a380037eb272c8fcd83003e706e8a93b86fa3a94c23e8
+    name: scalable-selenium-grid
+    type: application
+    urls:
+    - https://github.com/ndviet/test-scaling-grid/releases/download/scalable-selenium-grid-23.10.19/scalable-selenium-grid-23.10.19.tgz
+    version: 23.10.19
+  - apiVersion: v2
     appVersion: 23.10.12
     created: "2023-11-15T02:36:58.840564617Z"
     dependencies:
@@ -113,4 +169,4 @@ entries:
     urls:
     - https://github.com/ndviet/test-scaling-grid/releases/download/scalable-selenium-grid-23.9.26/scalable-selenium-grid-23.9.26.tgz
     version: 23.9.26
-generated: "2023-11-15T02:36:58.840581749Z"
+generated: "2023-11-15T02:46:44.508242702Z"
