@@ -1,0 +1,63 @@
+apiVersion: v2
+name: scalable-selenium-grid
+description: Umbrella chart for creating ecosystem of Autoscaling Selenium Grid in Kubernetes
+type: application
+version: 23.11.15
+appVersion: "23.11.15"
+icon: "https://github.com/ndviet/ndviet.github.io/raw/master/img/logo.ico"
+dependencies:
+  - condition: global.selenium-grid.enabled, selenium-grid.enabled
+    name: selenium-grid
+    repository: file://../../../../patch-selenium-grid/target/classes/patch-selenium-grid/charts/selenium-grid
+    version: 0.25.1
+    tags:
+      - full
+      - selenium-grid
+
+  - condition: global.keda.enabled, keda.enabled, global.seleniumGrid.autoscaling.enableWithExistingKEDA
+    name: keda
+    repository: https://kedacore.github.io/charts
+    version: 2.12.0
+    tags:
+      - full
+      - keda
+
+  - condition: global.grid-autoscaling.enabled, grid-autoscaling.enabled, global.seleniumGrid.autoscaling.enableWithExistingKEDA
+    name: grid-autoscaling
+    repository: file://../../../../grid-autoscaling/target/classes/grid-autoscaling
+    version: 23.11.15
+    tags:
+      - full
+      - keda
+
+  - condition: global.grid-pvc.enabled, grid-pvc.enabled, global.seleniumGrid.persistence.enabled
+    name: grid-pvc
+    repository: file://../../../../grid-pvc/target/classes/grid-pvc
+    version: 23.11.15
+    tags:
+      - full
+      - grid-pvc
+
+  - condition: global.jaeger-all-in-one.enabled, jaeger-all-in-one.enabled
+    name: jaeger-all-in-one
+    repository: https://raw.githubusercontent.com/hansehe/jaeger-all-in-one/master/helm/charts
+    version: 0.1.11
+    tags:
+      - full
+      - jaeger-all-in-one
+
+  - condition: global.ingress-nginx.enabled, ingress-nginx.enabled
+    name: ingress-nginx
+    repository: https://kubernetes.github.io/ingress-nginx
+    version: 4.8.3
+    tags:
+      - full
+      - ingress-nginx
+
+  - condition: global.webdav.enabled, webdav.enabled
+    name: webdav
+    repository: https://www.ndviet.org/charts
+    version: 4.3.0
+    tags:
+      - full
+      - webdav

@@ -1,0 +1,58 @@
+name: Release Charts Tag
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to release'
+        required: true
+        default: ''
+      chart_dir:
+        description: 'Chart directory to release'
+        required: true
+        default: 'scalable-selenium-grid/target/classes'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions: write-all
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Checkout tag
+        run: git checkout ${{ github.event.inputs.tag }}
+
+      - name: Configure Git
+        run: |
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+
+      - name: Set up JDK 11
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Build with Maven
+        run: mvn clean install
+
+      - name: Install Helm
+        uses: azure/setup-helm@v3
+
+      - name: Helm Package
+        run: helm package ${{ github.event.inputs.chart_dir }}/scalable-selenium-grid
+
+      - name: Copy Package Release
+        run: mkdir -p .cr-release-packages; cp scalable-selenium-grid*.tgz .cr-release-packages
+
+      - name: Run chart-releaser
+        uses: helm/chart-releaser-action@v1.6.0
+        with:
+          skip_packaging: true
+          charts_dir: ${{ github.event.inputs.chart_dir }}
+        env:
+          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
