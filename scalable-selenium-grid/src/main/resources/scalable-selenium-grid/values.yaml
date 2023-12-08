@@ -51,13 +51,6 @@ selenium-grid:
             name: '{{ template "seleniumGrid.router.fullname" $ }}'
             port:
               number: 4444
-      - path: /(/?)(session/.*/se/vnc)
-        pathType: Prefix
-        backend:
-          service:
-            name: '{{ template "seleniumGrid.router.fullname" $ }}'
-            port:
-              number: 4444
   basicAuth:
     enabled: false
   isolateComponents: true
@@ -117,8 +110,6 @@ selenium-grid:
         value: "true"
       - name: SE_VNC_NO_PASSWORD
         value: "true"
-#      - name: SE_NODE_GRID_URL
-#        value: "http://selenium-router.default:4444/selenium/"
       - name: SE_NODE_PORT
         value: "5555"
       - name: SE_VIDEO_FOLDER

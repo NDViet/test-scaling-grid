@@ -2,14 +2,14 @@ apiVersion: v2
 name: scalable-selenium-grid
 description: Umbrella chart for creating ecosystem of Autoscaling Selenium Grid in Kubernetes
 type: application
-version: 23.11.15
-appVersion: "23.11.15"
+version: 23.12.08
+appVersion: "23.12.08"
 icon: "https://github.com/ndviet/ndviet.github.io/raw/master/img/logo.ico"
 dependencies:
   - condition: global.selenium-grid.enabled, selenium-grid.enabled
     name: selenium-grid
     repository: file://../../../../patch-selenium-grid/target/classes/patch-selenium-grid/charts/selenium-grid
-    version: 0.25.1
+    version: 0.26.1
     tags:
       - full
       - selenium-grid
@@ -17,7 +17,7 @@ dependencies:
   - condition: global.keda.enabled, keda.enabled, global.seleniumGrid.autoscaling.enableWithExistingKEDA
     name: keda
     repository: https://kedacore.github.io/charts
-    version: 2.12.0
+    version: 2.12.1
     tags:
       - full
       - keda
@@ -25,7 +25,7 @@ dependencies:
   - condition: global.grid-autoscaling.enabled, grid-autoscaling.enabled, global.seleniumGrid.autoscaling.enableWithExistingKEDA
     name: grid-autoscaling
     repository: file://../../../../grid-autoscaling/target/classes/grid-autoscaling
-    version: 23.11.15
+    version: 23.12.08
     tags:
       - full
       - keda
@@ -33,7 +33,7 @@ dependencies:
   - condition: global.grid-pvc.enabled, grid-pvc.enabled, global.seleniumGrid.persistence.enabled
     name: grid-pvc
     repository: file://../../../../grid-pvc/target/classes/grid-pvc
-    version: 23.11.15
+    version: 23.12.08
     tags:
       - full
       - grid-pvc
