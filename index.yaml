@@ -2,6 +2,68 @@ apiVersion: v1
 entries:
   scalable-selenium-grid:
   - apiVersion: v2
+    appVersion: 23.12.08
+    created: "2023-12-08T19:16:53.847161545Z"
+    dependencies:
+    - condition: global.selenium-grid.enabled, selenium-grid.enabled
+      name: selenium-grid
+      repository: file://../../../../patch-selenium-grid/target/classes/patch-selenium-grid/charts/selenium-grid
+      tags:
+      - full
+      - selenium-grid
+      version: 0.26.1
+    - condition: global.keda.enabled, keda.enabled, global.seleniumGrid.autoscaling.enableWithExistingKEDA
+      name: keda
+      repository: https://kedacore.github.io/charts
+      tags:
+      - full
+      - keda
+      version: 2.12.1
+    - condition: global.grid-autoscaling.enabled, grid-autoscaling.enabled, global.seleniumGrid.autoscaling.enableWithExistingKEDA
+      name: grid-autoscaling
+      repository: file://../../../../grid-autoscaling/target/classes/grid-autoscaling
+      tags:
+      - full
+      - keda
+      version: 23.12.08
+    - condition: global.grid-pvc.enabled, grid-pvc.enabled, global.seleniumGrid.persistence.enabled
+      name: grid-pvc
+      repository: file://../../../../grid-pvc/target/classes/grid-pvc
+      tags:
+      - full
+      - grid-pvc
+      version: 23.12.08
+    - condition: global.jaeger-all-in-one.enabled, jaeger-all-in-one.enabled
+      name: jaeger-all-in-one
+      repository: https://raw.githubusercontent.com/hansehe/jaeger-all-in-one/master/helm/charts
+      tags:
+      - full
+      - jaeger-all-in-one
+      version: 0.1.11
+    - condition: global.ingress-nginx.enabled, ingress-nginx.enabled
+      name: ingress-nginx
+      repository: https://kubernetes.github.io/ingress-nginx
+      tags:
+      - full
+      - ingress-nginx
+      version: 4.8.3
+    - condition: global.webdav.enabled, webdav.enabled
+      name: webdav
+      repository: https://www.ndviet.org/charts
+      tags:
+      - full
+      - webdav
+      version: 4.3.0
+    description: Umbrella chart for creating ecosystem of Autoscaling Selenium Grid
+      in Kubernetes
+    digest: 313da588c335376a2a544972eab7a1865f1c4bd7524ba9eb6b40b2bb1b6b8266
+    icon: https://github.com/ndviet/ndviet.github.io/raw/master/img/logo.ico
+    name: scalable-selenium-grid
+    type: application
+    urls:
+    - https://github.com/ndviet/test-scaling-grid/releases/download/scalable-selenium-grid-23.12.08/scalable-selenium-grid-23.12.08.tgz
+    version: 23.12.08
+  - apiVersion: v2
     appVersion: 23.11.15
     created: "2023-11-15T04:33:55.530492184Z"
     dependencies:
@@ -359,4 +421,4 @@ entries:
     urls:
     - https://github.com/ndviet/test-scaling-grid/releases/download/scalable-selenium-grid-23.9.26/scalable-selenium-grid-23.9.26.tgz
     version: 23.9.26
-generated: "2023-11-15T04:33:55.530517942Z"
+generated: "2023-12-08T19:16:53.847190489Z"
