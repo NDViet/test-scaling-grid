@@ -12,8 +12,10 @@ metadata:
       {{- toYaml . | nindent 4 }}
     {{- end }}
 data:
-  SE_ENABLE_TRACING: {{ (.Values.global.seleniumGrid.tracing).enabled | default "false" | quote }}
+{{- if (.Values.global.seleniumGrid.tracing).enabled }}
+  SE_ENABLE_TRACING: "true"
   {{- $jaegerEndpoint := (.Values.global.seleniumGrid.tracing).jaegerEndpoint | default (printf "http://%s-jaeger-all-in-one-headless:14250" .Release.Name) }}
   {{- $jaegerEndpoint := tpl $jaegerEndpoint . }}
   {{- $JAVA_OPTS := printf "-Dotel.traces.exporter=jaeger -Dotel.exporter.jaeger.endpoint=%s -Dotel.resource.attributes=service.name=selenium -Dotel.java.global-autoconfigure.enabled=true" $jaegerEndpoint }}
   JAVA_OPTS: {{ $JAVA_OPTS | quote }}
+{{- end }}

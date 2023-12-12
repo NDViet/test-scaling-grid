@@ -9,11 +9,11 @@ tags:
 global:
   seleniumGrid:
     persistence:
-      enabled: &persistence true
+      enabled: &persistence false
     autoscaling:
       enableWithExistingKEDA: &enableWithExistingKEDA true
     tracing:
-      enabled: true
+      enabled: false
       jaegerEndpoint: http://{{ .Release.Name }}-jaeger-all-in-one-headless:14250
   selenium-grid:
     #enabled: true
@@ -43,7 +43,7 @@ selenium-grid:
       nginx.ingress.kubernetes.io/rewrite-target: /$2
       nginx.ingress.kubernetes.io/app-root: &gridAppRoot "/selenium"
     ingressClassName: nginx
-    hostname: ""
+    hostname: "aws.ndviet.org"
     paths:
       - path: /selenium(/|$)(.*)
         pathType: ImplementationSpecific
@@ -99,6 +99,8 @@ selenium-grid:
         cpu: "1"
     extraEnvFrom: *extraEnvFrom
     extraEnvironmentVariables: &extraEnvironmentVariablesNodes
+      - name: SE_NODE_GRID_URL
+        value: http://aws.ndviet.org/selenium
 #      - name: SE_NODE_SESSION_TIMEOUT
 #        value: "300"
 #      - name: SE_NODE_OVERRIDE_MAX_SESSIONS
@@ -134,16 +136,16 @@ selenium-grid:
     ports: &nodePorts
       - 5555
     extraVolumeMounts:
-      - name: node-data
-        mountPath: /home/seluser/Downloads
-        subPathExpr: $(SE_DOWNLOAD_MOUNT_PATH)
-      - name: node-data
-        mountPath: *SE_SESSION_FOLDER
-        subPath: data
+#      - name: node-data
+#        mountPath: /home/seluser/Downloads
+#        subPathExpr: $(SE_DOWNLOAD_MOUNT_PATH)
+#      - name: node-data
+#        mountPath: *SE_SESSION_FOLDER
+#        subPath: data
     extraVolumes: &nodeVolumes
-      - name: node-data
-        persistentVolumeClaim:
-          claimName: &seleniumClaim "selenium-node"
+#      - name: node-data
+#        persistentVolumeClaim:
+#          claimName: &seleniumClaim "selenium-node"
     startupProbe: &nodeStartupProbe
       httpGet:
         path: /status
@@ -168,7 +170,7 @@ selenium-grid:
     startupProbe: *nodeStartupProbe
 
   videoRecorder:
-    enabled: true
+    enabled: false
     uploadDestinationPrefix: false
     uploader: false
     extraEnvironmentVariables: *extraEnvironmentVariablesNodes
@@ -177,29 +179,29 @@ selenium-grid:
         videoFolder: "videos"
         videoScripts: "configurations"
     extraVolumeMounts:
-      - name: configurations
-        mountPath: /opt/bin/video.sh
-        subPath: video.sh
-      - name: node-data
-        mountPath: *SE_VIDEO_FOLDER
-        subPath: videos
-      - name: configurations
-        mountPath: /opt/bin/session_task.sh
-        subPath: session_task.sh
-      - name: configurations
-        mountPath: /etc/supervisord.conf
-        subPath: supervisord.conf
-      - name: configurations
-        mountPath: /opt/bin/video_ready.py
-        subPath: video_ready.py
+#      - name: configurations
+#        mountPath: /opt/bin/video.sh
+#        subPath: video.sh
+#      - name: node-data
+#        mountPath: *SE_VIDEO_FOLDER
+#        subPath: videos
+#      - name: configurations
+#        mountPath: /opt/bin/session_task.sh
+#        subPath: session_task.sh
+#      - name: configurations
+#        mountPath: /etc/supervisord.conf
+#        subPath: supervisord.conf
+#      - name: configurations
+#        mountPath: /opt/bin/video_ready.py
+#        subPath: video_ready.py
     extraVolumes:
-      - name: configurations
-        configMap:
-          name: "selenium-configurations"
-          defaultMode: 0511
+#      - name: configurations
+#        configMap:
+#          name: "selenium-configurations"
+#          defaultMode: 0511
 
-#jaeger-all-in-one:
-  #enabled: true
+jaeger-all-in-one:
+  enabled: false
 
 keda:
   #enabled: true
@@ -212,17 +214,17 @@ webdav:
   #enabled: true
   persistence:
     enabled: *persistence
-    existingClaim: *seleniumClaim
+#    existingClaim: *seleniumClaim
 
 ingress-nginx:
   #enabled: true
-  controller:
-    admissionWebhooks:
-      enabled: false
-    hostNetwork: true
-    kind: DaemonSet
-    service:
-      type: ClusterIP
+#  controller:
+#    admissionWebhooks:
+#      enabled: false
+#    hostNetwork: true
+#    kind: DaemonSet
+#    service:
+#      type: ClusterIP
   tcp:
     4444: "{{ .Release.Namespace }}/selenium-router:4444"
     16686: "{{ .Release.Namespace }}/{{ .Release.Name }}-jaeger-all-in-one-headless:16686"
