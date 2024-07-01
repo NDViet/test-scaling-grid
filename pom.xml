@@ -108,7 +108,7 @@
                 <plugin>
                     <groupId>io.kokuwa.maven</groupId>
                     <artifactId>helm-maven-plugin</artifactId>
-                    <version>6.14.0</version>
+                    <version>6.15.0</version>
                     <extensions>true</extensions>
                     <configuration>
                         <chartDirectory>${project.build.directory}/classes</chartDirectory>
